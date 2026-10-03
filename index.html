@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Conversor de imagens de alta performance para JPG compacto para web. Suporta PNG, HEIC, BMP, WEBP e TIFF. 100% no navegador com total privacidade.">
+  <meta name="theme-color" content="#0b0f19">
+  <title>PixelCompact | Conversor de Imagens para JPG Web</title>
+  
+  <!-- Google Fonts: Outfit e Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Principal -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Bibliotecas Locais (Execução 100% Offline / Client-Side) -->
+  <script src="vendor/jszip.min.js"></script>
+  <script src="vendor/heic2any.min.js"></script>
+</head>
+<body>
+
+  <!-- Efeitos de iluminação de fundo (Glow Orbs) -->
+  <div class="bg-glow glow-1" aria-hidden="true"></div>
+  <div class="bg-glow glow-2" aria-hidden="true"></div>
+  <div class="bg-glow glow-3" aria-hidden="true"></div>
+
+  <div class="app-layout">
+    
+    <!-- Cabeçalho Principal -->
+    <header class="app-header">
+      <div class="header-brand">
+        <div class="logo-box">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect>
+            <circle cx="8.5" cy="8.5" r="1.5"></circle>
+            <polyline points="21 15 16 10 5 21"></polyline>
+          </svg>
+          <span class="logo-badge">PRO</span>
+        </div>
+        <div class="brand-text">
+          <h1 class="brand-title">Pixel<span class="gradient-text">Compact</span></h1>
+          <p class="brand-subtitle">Conversor de Imagens para JPG Compacto Web</p>
+        </div>
+      </div>
+
+      <!-- Badges de Garantia e Liderança -->
+      <div class="header-badges">
+        <div class="security-badge" title="Todo o processamento ocorre no seu navegador, sem envio de imagens para nenhum servidor externo.">
+          <span class="status-indicator"></span>
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span>100% Client-Side • Privacidade Total</span>
+        </div>
+      </div>
+    </header>
+
+    <main class="main-content">
+      
+      <!-- Painel Superior de Configuração de Otimização -->
+      <section class="settings-card" aria-label="Opções de Otimização">
+        <div class="settings-header">
+          <div class="settings-title">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <h2>Configurações do JPG para Web</h2>
+          </div>
+          <span class="settings-hint">Ajuste o equilíbrio entre economia de bytes e nitidez visual</span>
+        </div>
+
+        <div class="settings-grid">
+          
+          <!-- Presets de Qualidade -->
+          <div class="setting-item">
+            <label class="setting-label">Nível de Compactação</label>
+            <div class="presets-row" role="radiogroup" aria-label="Presets de Qualidade">
+              <button type="button" class="preset-btn" data-quality="70">
+                <span class="preset-name">Ultra Compacto</span>
+                <span class="preset-detail">70% • Máx. Economia</span>
+              </button>
+              <button type="button" class="preset-btn active" data-quality="82">
+                <span class="preset-name">Equilibrado</span>
+                <span class="preset-detail">82% • Recomendado</span>
+              </button>
+              <button type="button" class="preset-btn" data-quality="92">
+                <span class="preset-name">Alta Fidelidade</span>
+                <span class="preset-detail">92% • Detalhes Finos</span>
+              </button>
+            </div>
+            
+            <!-- Slider Fino de Qualidade -->
+            <div class="slider-wrapper">
+              <div class="slider-info">
+                <span>Qualidade JPEG</span>
+                <span class="slider-value" id="qualityValue">82%</span>
+              </div>
+              <input type="range" id="qualitySlider" min="50" max="98" value="82" step="1" aria-label="Slider de Qualidade JPEG">
+            </div>
+          </div>
+
+          <!-- Redimensionamento Proporcional Web -->
+          <div class="setting-item">
+            <label class="setting-label" for="resizeSelect">Redimensionamento Máximo</label>
+            <div class="select-wrapper">
+              <select id="resizeSelect" class="custom-select">
+                <option value="original" selected>Dimensão Original (Sem Redimensionar)</option>
+                <option value="1920">Full HD (Max 1920px no maior lado) • Ideal Web</option>
+                <option value="1280">HD (Max 1280px no maior lado) • Blogs & Artigos</option>
+                <option value="800">Ultra Compact (Max 800px no maior lado) • Miniaturas</option>
+              </select>
+            </div>
+            <p class="setting-subtext">Mantém a proporção exata da foto original sem deformação.</p>
+          </div>
+
+          <!-- Fundo de Transparência para PNGs -->
+          <div class="setting-item">
+            <label class="setting-label" for="bgFillSelect">Fundo para Transparência (Canal Alfa)</label>
+            <div class="select-wrapper">
+              <select id="bgFillSelect" class="custom-select">
+                <option value="#FFFFFF" selected>Fundo Branco (#FFFFFF) • Padrão Web</option>
+                <option value="#0b0f19">Fundo Escuro (#0B0F19) • Dark Mode</option>
+                <option value="#F3F4F6">Fundo Cinza Suave (#F3F4F6)</option>
+              </select>
+            </div>
+            <p class="setting-subtext">Evita fundos pretos indesejados ao converter PNGs transparentes em JPG.</p>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Zona de Arraste e Seleção (Dropzone) -->
+      <section class="dropzone-section" aria-label="Área de Envio de Arquivos">
+        <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Clique ou arraste imagens aqui para converter">
+          <input type="file" id="fileInput" multiple accept=".png,.heic,.heif,.bmp,.webp,.tiff,.tif,.jpg,.jpeg,image/png,image/heic,image/heif,image/bmp,image/webp,image/tiff,image/jpeg" style="display: none;">
+          
+          <div class="dropzone-glow" aria-hidden="true"></div>
+          
+          <div class="dropzone-content">
+            <div class="dropzone-icon-circle">
+              <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+
+            <h3 class="dropzone-title">Arraste e solte suas imagens aqui</h3>
+            <p class="dropzone-subtitle">ou clique em qualquer área para navegar pelos arquivos do seu dispositivo</p>
+
+            <!-- Tags de Formatos Aceitos -->
+            <div class="format-tags-list">
+              <span class="format-tag tag-png">PNG</span>
+              <span class="format-tag tag-heic">HEIC / Apple</span>
+              <span class="format-tag tag-bmp">BMP</span>
+              <span class="format-tag tag-webp">WEBP</span>
+              <span class="format-tag tag-tiff">TIFF</span>
+              <span class="format-tag tag-jpg">JPG / Recompressão</span>
+            </div>
+
+            <!-- Aviso Importante de Restrição de Escopo -->
+            <div class="scope-notice">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+              <span>Vídeos (.mp4, etc.) e GIFs animados não são suportados para conversão.</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Barra de Estatísticas Globais e Ações de Lote (Aparece quando há arquivos) -->
+      <section class="stats-bar hidden" id="statsBar" aria-label="Estatísticas e Ações em Lote">
+        <div class="stats-summary">
+          <div class="stat-box">
+            <span class="stat-label">Arquivos</span>
+            <span class="stat-number" id="statTotalCount">0</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-box">
+            <span class="stat-label">Tamanho Original</span>
+            <span class="stat-number" id="statOriginalTotal">0 MB</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-box">
+            <span class="stat-label">Novo Tamanho JPG</span>
+            <span class="stat-number stat-highlight" id="statNewTotal">0 MB</span>
+          </div>
+          <div class="stat-divider"></div>
+          <div class="stat-box">
+            <span class="stat-label">Economia de Espaço</span>
+            <span class="stat-badge" id="statReductionBadge">-0%</span>
+          </div>
+        </div>
+
+        <div class="stats-actions">
+          <button type="button" class="btn btn-outline" id="clearBtn">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+            Limpar Lista
+          </button>
+          <button type="button" class="btn btn-primary" id="downloadZipBtn" disabled>
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="7 10 12 15 17 10"></polyline>
+              <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            Baixar Todos (.ZIP)
+          </button>
+        </div>
+      </section>
+
+      <!-- Fila e Lista de Imagens Convertidas -->
+      <section class="queue-section" id="queueSection" aria-label="Lista de Conversões">
+        <div class="queue-header hidden" id="queueHeader">
+          <h3 class="queue-title">Imagens na Fila</h3>
+          <span class="queue-status-text" id="queueStatusText">Aguardando início...</span>
+        </div>
+
+        <div class="queue-list" id="queueList">
+          <!-- Os cards de imagens serão injetados dinamicamente via app.js -->
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Modal de Comparação Visual Antes vs. Depois -->
+    <div class="modal-overlay hidden" id="compareModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h3 class="modal-title" id="modalTitle">Comparativo de Imagem</h3>
+          <button type="button" class="modal-close-btn" id="closeModalBtn" aria-label="Fechar comparativo">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="compare-container">
+            <div class="compare-side">
+              <div class="compare-meta">
+                <span class="compare-label">Original</span>
+                <span class="compare-size" id="compareOriginalSize">--</span>
+              </div>
+              <div class="compare-img-box">
+                <img id="compareOriginalImg" src="" alt="Imagem Original">
+              </div>
+            </div>
+            <div class="compare-side">
+              <div class="compare-meta">
+                <span class="compare-label label-new">JPG Compacto Web</span>
+                <span class="compare-size" id="compareNewSize">--</span>
+              </div>
+              <div class="compare-img-box">
+                <img id="compareNewImg" src="" alt="Imagem Convertida">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Container de Toasts para Alertas e Notificações Não-Intrusivas -->
+    <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+    <!-- Rodapé Informativo com Governança e Autoria -->
+    <footer class="app-footer">
+      <div class="footer-content">
+        <p class="footer-note">
+          <strong>PixelCompact JPG</strong> • Projeto com processamento 100% Client-Side. Suas imagens nunca são enviadas a nenhum servidor.
+        </p>
+        <p class="footer-credits">
+          Tech Lead & Product Owner: <strong>Usuário</strong> • Engenharia, Arquitetura & UI/UX: <strong>Antigravity AI Agents</strong>
+        </p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Script da Aplicação -->
+  <script src="app.js"></script>
+</body>
+</html>

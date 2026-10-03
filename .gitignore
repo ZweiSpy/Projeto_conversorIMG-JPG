@@ -1,0 +1,93 @@
+# ==============================================================================
+# .gitignore - PixelCompact JPG (Proteção e Anti-Poluição de Repositório)
+# ==============================================================================
+
+# --- Perfis Temporários e Automação de Navegadores ---
+tmp_profile/
+tmp_test_profile*/
+.tmp/
+tmp/
+temp/
+*.log
+
+# --- Sistema Operacional: Windows ---
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+desktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msm
+*.msp
+*.lnk
+
+# --- Sistema Operacional: macOS ---
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# --- Sistema Operacional: Linux ---
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# --- Ambientes de Desenvolvimento e Editores (IDEs) ---
+.vscode/
+!.vscode/settings.json.example
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+.project
+.settings/
+.buildpath
+
+# --- Node.js & Gerenciadores de Pacote ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+package-lock.json.bak
+
+# --- Python & Ambientes Virtuais ---
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+htmlcov/
+*.egg-info/
+.installed.cfg
+*.egg
+.venv/
+venv/
+ENV/
+env/
+
+# --- Arquivos Temporários de Exportação e Compactação ---
+*.zip
+*.tar
+*.tar.gz
+*.rar
+*.7z
+
+# --- Credenciais e Arquivos Sensíveis (Zero-Leak Policy) ---
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.cert
+*.crt
+credentials.json
