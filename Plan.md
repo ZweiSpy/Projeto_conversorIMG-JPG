@@ -116,6 +116,12 @@ gantt
 - Teste de rejeição de arquivos não autorizados (vídeos `.mp4`, GIFs animados `.gif`, executáveis renomeados).
 - Revisão e homologação final pelo Tech Lead & PO.
 
+### Fase 6: Expansão Desktop & Executável Autônomo (.exe)
+- Implementação do backend desktop via `pywebview` e Microsoft WebView2 (`desktop_app.py`).
+- Integração bidirecional com a API do Windows Explorer (`select_folder()` e gravação direta no disco rígido sem passar por ZIP).
+- Detecção dinâmica no frontend para exibir botão "Salvar na Pasta do PC".
+- Geração de ícone de alta resolução `icon.ico` e compilação do executável autônomo `dist/PixelCompact.exe` via PyInstaller com flag `--noconsole`.
+
 ---
 
 ## 5. Critérios de Aceitação (Definition of Done - DoD)
@@ -125,4 +131,5 @@ gantt
 3. **Privacidade:** Nenhuma requisição HTTP de upload de arquivos de imagem é disparada; 100% da conversão ocorre localmente.
 4. **Resiliência de Memória:** O navegador não trava nem apresenta congelamento perceptível durante a conversão de lotes com até 20 imagens.
 5. **Usabilidade & Estética:** Interface com nota máxima de acabamento visual, responsiva em desktop e mobile, com badges claros de redução de tamanho.
-6. **Entrega dos Arquivos:** Todos os arquivos de documentação (`Plan.md`, `Agents.md`, `readme.md`, `sdd.md`) sincronizados e em conformidade estrita.
+6. **Suporte Desktop:** Disponibilização de executável `.exe` independente para Windows com recurso de salvamento direto em pastas locais.
+7. **Entrega dos Arquivos:** Todos os arquivos de documentação (`Plan.md`, `Agents.md`, `readme.md`, `sdd.md`) sincronizados e em conformidade estrita.

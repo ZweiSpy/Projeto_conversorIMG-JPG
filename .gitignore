@@ -82,6 +82,11 @@ env/
 *.rar
 *.7z
 
+# --- Build e Executáveis Locais (PyInstaller) ---
+build/
+dist/
+*.spec
+
 # --- Credenciais e Arquivos Sensíveis (Zero-Leak Policy) ---
 .env
 .env.local

@@ -67,15 +67,29 @@ Diferente de conversores online convencionais que exigem o upload de seus arquiv
 
 ---
 
-## 🚀 Como Executar Localmente
+## 🚀 Como Executar
 
-Como a aplicação é construída com tecnologias web nativas e modernas, ela não depende de nenhuma instalação complexa de bancos de dados ou servidores pesados.
+A aplicação oferece duas formas de uso: como **software executável desktop (.exe)** ou diretamente no **navegador web**.
 
-### Opção 1: Abrir Diretamente no Navegador
+### 💻 Opção 1: Software Executável Desktop (Recomendado para PC)
+Execute como um programa nativo do Windows com ícone próprio na barra de tarefas e botão exclusivo para **Salvar na Pasta do PC** (sem precisar descompactar ZIP):
+
+1. Vá até a pasta `dist/` e execute o arquivo:
+   ```text
+   dist/PixelCompact.exe
+   ```
+2. *(Opcional)* Para recompilar o executável a qualquer momento:
+   ```bash
+   python build_exe.py
+   ```
+
+---
+
+### 🌐 Opção 2: Abrir Diretamente no Navegador
 1. Baixe ou clone o repositório em sua máquina.
 2. Dê um duplo clique no arquivo `index.html` (ou abra pelo seu navegador favorito: Google Chrome, Microsoft Edge, Mozilla Firefox ou Safari).
 
-### Opção 2: Executar com um Servidor Local Simples
+### 🌐 Opção 3: Executar com um Servidor Local Simples
 Para uma experiência ideal com recursos modernos (como Web Workers e Wasm):
 
 ```bash

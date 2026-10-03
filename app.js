@@ -25,7 +25,9 @@
     items: new Map(),         // id -> itemData
     queue: [],                // lista de IDs aguardando conversão
     activeWorkers: 0,         // conversões em andamento
-    isZipping: false
+    isZipping: false,
+    isSavingFolder: false,
+    isDesktop: false
   };
 
   // --- 3. Elementos do DOM ---
@@ -49,6 +51,7 @@
   const queueList = document.getElementById('queueList');
 
   const clearBtn = document.getElementById('clearBtn');
+  const saveFolderBtn = document.getElementById('saveFolderBtn');
   const downloadZipBtn = document.getElementById('downloadZipBtn');
   const toastContainer = document.getElementById('toastContainer');
 
@@ -139,6 +142,11 @@
 
     // Limpar Lista
     clearBtn.addEventListener('click', clearAll);
+
+    // Salvar na Pasta do PC (Desktop)
+    if (saveFolderBtn) {
+      saveFolderBtn.addEventListener('click', saveAllToFolder);
+    }
 
     // Download ZIP
     downloadZipBtn.addEventListener('click', downloadAllAsZip);
@@ -573,8 +581,11 @@
       statReductionBadge.textContent = '-0%';
     }
 
-    // Botão de Download ZIP liberado apenas quando houver ao menos 1 item concluído
+    // Botões de Ação liberados quando houver ao menos 1 item concluído
     downloadZipBtn.disabled = completedCount === 0 || state.isZipping;
+    if (saveFolderBtn) {
+      saveFolderBtn.disabled = completedCount === 0 || state.isSavingFolder;
+    }
 
     // Texto de status da fila
     if (state.activeWorkers > 0 || state.queue.length > 0) {
@@ -690,6 +701,83 @@
     }
   }
 
+  // Conversão de Blob para Base64 para envio via API Desktop
+  function blobToBase64(blob) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const res = reader.result;
+        const b64 = res.split(',')[1];
+        resolve(b64);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(blob);
+    });
+  }
+
+  // Salvamento direto em pasta do computador via API Desktop
+  async function saveAllToFolder() {
+    if (!window.pywebview || !window.pywebview.api) {
+      showToast('API de sistema desktop não detectada.', 'danger');
+      return;
+    }
+
+    const completedItems = Array.from(state.items.values()).filter(item => item.status === 'completed' && item.outputBlob);
+    if (completedItems.length === 0) {
+      showToast('Nenhuma imagem convertida pronta para salvar.', 'warning');
+      return;
+    }
+
+    // Solicita ao usuário selecionar uma pasta no Windows Explorer
+    const targetFolder = await window.pywebview.api.select_folder();
+    if (!targetFolder) return; // cancelado pelo usuário
+
+    state.isSavingFolder = true;
+    saveFolderBtn.disabled = true;
+    saveFolderBtn.innerHTML = `<div class="spinner"></div> Gravando no PC...`;
+
+    try {
+      const filesPayload = [];
+      const usedNames = new Set();
+
+      for (let i = 0; i < completedItems.length; i++) {
+        const item = completedItems[i];
+        let clean = item.cleanName.replace(/[/\\?%*:|"<>]/g, '_').trim() || `imagem_${i + 1}`;
+        let finalFilename = `${clean}.jpg`;
+        let counter = 1;
+        while (usedNames.has(finalFilename.toLowerCase())) {
+          finalFilename = `${clean}_(${counter}).jpg`;
+          counter++;
+        }
+        usedNames.add(finalFilename.toLowerCase());
+
+        const b64 = await blobToBase64(item.outputBlob);
+        filesPayload.push({
+          filename: finalFilename,
+          base64: b64
+        });
+      }
+
+      const res = await window.pywebview.api.save_all_files(filesPayload, targetFolder);
+      if (res && res.success) {
+        showToast(`${res.count} imagens gravadas diretamente em: ${res.path}`, 'success');
+      } else {
+        showToast(res.error || 'Falha ao gravar arquivos.', 'danger');
+      }
+    } catch (err) {
+      console.error('Erro ao salvar no disco:', err);
+      showToast('Erro durante a gravação dos arquivos no computador.', 'danger');
+    } finally {
+      state.isSavingFolder = false;
+      saveFolderBtn.disabled = false;
+      saveFolderBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+        </svg> Salvar na Pasta do PC
+      `;
+    }
+  }
+
   // --- 11. Modal de Comparação Visual Antes vs Depois ---
   function openCompare(id) {
     const item = state.items.get(id);
@@ -720,6 +808,20 @@
   document.addEventListener('DOMContentLoaded', () => {
     initControls();
     initDropzone();
+
+    // Detecção da API Desktop PyWebView
+    const enableDesktopMode = () => {
+      state.isDesktop = true;
+      if (saveFolderBtn) {
+        saveFolderBtn.classList.remove('hidden');
+      }
+    };
+
+    if (window.pywebview) {
+      enableDesktopMode();
+    } else {
+      window.addEventListener('pywebviewready', enableDesktopMode);
+    }
   });
 
 })();

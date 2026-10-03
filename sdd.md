@@ -173,3 +173,35 @@ interface QueueItem {
 - **Zero Chamadas de Rede:** A aplicação não necessita de nenhuma conexão com a internet após o carregamento inicial dos assets.
 - **Proteção contra Cross-Site Scripting (XSS):** Nomes de arquivos inseridos pelo usuário no DOM são escapados como texto puro (`textContent`), impedindo injeção de tags HTML maliciosas através de metadados de arquivos.
 - **Sanitização de Path Traversal no ZIP:** Caracteres como `../` ou separadores de caminho absolutos são removidos dos nomes dos arquivos antes da adição ao `JSZip`.
+
+---
+
+## 9. Arquitetura Desktop Nativa (Microsoft WebView2 + PyWebView)
+
+Para uso como software nativo de computador pessoal (`.exe`), o sistema incorpora uma camada de integração com o sistema operacional:
+
+```mermaid
+flowchart LR
+    subgraph Windows_Desktop [Ambiente Desktop Windows]
+        EXE[PixelCompact.exe] -->|Inicia| SRV[Servidor HTTP Threaded Local em Porta Dinâmica]
+        EXE -->|Cria Janela Nativa| WV2[Microsoft WebView2 Engine]
+    end
+
+    subgraph Frontend_App [Frontend Web Local]
+        WV2 -->|Renderiza| UI[HTML5 / CSS Dark Glassmorphism / Canvas]
+        UI -->|Detecção pywebviewready| BTN[Botão: Salvar na Pasta do PC]
+    end
+
+    subgraph OS_Bridge [Ponte Bidirecional JS-Python]
+        BTN -->|select_folder| DLG[Diálogo Nativo Windows Explorer]
+        BTN -->|save_all_files| DSK[Gravação Direta no Disco Rígido]
+        DSK -->|os.startfile| EXP[Abre Pasta no Explorer Automaticamente]
+    end
+```
+
+### 9.1. Componentes do Executável Desktop
+1. **`desktop_app.py`:** Ponto de entrada desktop. Inicializa um servidor HTTP local em uma thread daemon com porta dinâmica e monta a janela `webview.create_window` com ícone personalizado `icon.ico`.
+2. **`DesktopAPI`:** Interface Python acessível pelo JavaScript com métodos seguros:
+   - `select_folder()`: Invoca o `create_file_dialog(FOLDER_DIALOG)` nativo do Windows.
+   - `save_all_files(files_payload, target_dir)`: Decodifica os bytes Base64 dos JPGs otimizados e grava os arquivos diretamente na pasta selecionada, abrindo-a no Windows Explorer após a conclusão.
+3. **`build_exe.py`:** Automação com PyInstaller com parâmetros `--noconsole` e `--onefile`, gerando o executável standalone de ~13 MB em `dist/PixelCompact.exe`.
