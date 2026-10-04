@@ -1,5 +1,6 @@
 """
-PixelCompact JPG - Aplicativo Executável Desktop
+Zwei PixelCompact - Aplicativo Executável Desktop
+Zwei Coorporações LTDA | Desenvolvido por Zwei
 Executado em janela nativa do Windows via Microsoft WebView2 / PyWebView
 Permite salvar as imagens diretamente em qualquer pasta do computador.
 """
@@ -97,12 +98,14 @@ def main():
     port, server = start_server()
     api = DesktopAPI()
 
-    icon_path = os.path.join(BASE_DIR, "icon.ico")
+    icon_path = os.path.join(BASE_DIR, "z-icon.ico")
+    if not os.path.exists(icon_path):
+        icon_path = os.path.join(BASE_DIR, "icon.ico")
     if not os.path.exists(icon_path):
         icon_path = None
 
     window = webview.create_window(
-        title="PixelCompact | Conversor de Imagens para JPG Web",
+        title="Zwei PixelCompact | Conversor de Imagens para JPG Web",
         url=f"http://127.0.0.1:{port}",
         js_api=api,
         width=1240,

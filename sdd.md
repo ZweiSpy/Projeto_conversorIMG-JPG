@@ -1,12 +1,12 @@
 # Software Design Document (SDD.md)
-## Conversor de Imagens para JPG Compacto Web
+## Zwei PixelCompact | Conversor de Imagens para JPG Web
 
 ---
 
 ## 1. Visão Geral e Objetivos Arquiteturais
 
 ### 1.1. Propósito do Sistema
-O **Conversor de Imagens para JPG Compacto Web** é um sistema web 100% *client-side* (executado exclusivamente no navegador do usuário) projetado para converter imagens de diversos formatos (`PNG`, `HEIC/HEIF`, `BMP`, `WEBP`, `TIFF`, etc.) para o formato `JPG/JPEG` ultra-compacto, otimizado para transmissão e consumo na internet.
+O **Zwei PixelCompact** é um sistema de alto desempenho desenvolvido por **Zwei** para a **Zwei Coorporações LTDA**, operando tanto como aplicação web 100% *client-side* (executada exclusivamente no navegador do usuário) quanto como aplicativo desktop nativo para Windows (`ZweiPixelCompact.exe`). Seu propósito é converter imagens de diversos formatos (`PNG`, `HEIC/HEIF`, `BMP`, `WEBP`, `TIFF`, etc.) para o formato `JPG/JPEG` ultra-compacto, otimizado para transmissão e consumo na internet.
 
 ### 1.2. Princípios Arquiteturais Fundamentais
 1. **Privacidade Absoluta (Zero-Knowledge):** Nenhum byte de imagem trafega por redes externas ou servidores de terceiros.
@@ -183,12 +183,12 @@ Para uso como software nativo de computador pessoal (`.exe`), o sistema incorpor
 ```mermaid
 flowchart LR
     subgraph Windows_Desktop [Ambiente Desktop Windows]
-        EXE[PixelCompact.exe] -->|Inicia| SRV[Servidor HTTP Threaded Local em Porta Dinâmica]
+        EXE[ZweiPixelCompact.exe] -->|Inicia| SRV[Servidor HTTP Threaded Local em Porta Dinâmica]
         EXE -->|Cria Janela Nativa| WV2[Microsoft WebView2 Engine]
     end
 
     subgraph Frontend_App [Frontend Web Local]
-        WV2 -->|Renderiza| UI[HTML5 / CSS Dark Glassmorphism / Canvas]
+        WV2 -->|Renderiza| UI[HTML5 / CSS Dark Glassmorphism / Canvas / Logo Z]
         UI -->|Detecção pywebviewready| BTN[Botão: Salvar na Pasta do PC]
     end
 
@@ -200,8 +200,12 @@ flowchart LR
 ```
 
 ### 9.1. Componentes do Executável Desktop
-1. **`desktop_app.py`:** Ponto de entrada desktop. Inicializa um servidor HTTP local em uma thread daemon com porta dinâmica e monta a janela `webview.create_window` com ícone personalizado `icon.ico`.
+1. **`desktop_app.py`:** Ponto de entrada desktop. Inicializa um servidor HTTP local em uma thread daemon com porta dinâmica e monta a janela `webview.create_window` com ícone personalizado `z-icon.ico` e título corporativo `Zwei PixelCompact`.
 2. **`DesktopAPI`:** Interface Python acessível pelo JavaScript com métodos seguros:
    - `select_folder()`: Invoca o `create_file_dialog(FOLDER_DIALOG)` nativo do Windows.
    - `save_all_files(files_payload, target_dir)`: Decodifica os bytes Base64 dos JPGs otimizados e grava os arquivos diretamente na pasta selecionada, abrindo-a no Windows Explorer após a conclusão.
-3. **`build_exe.py`:** Automação com PyInstaller com parâmetros `--noconsole` e `--onefile`, gerando o executável standalone de ~13 MB em `dist/PixelCompact.exe`.
+3. **`build_exe.py`:** Automação com PyInstaller com parâmetros `--noconsole`, `--onefile`, `--icon=z-icon.ico` e empacotamento completo de `Z-logo.png`, gerando o executável standalone de ~15 MB em `dist/ZweiPixelCompact.exe`.
+
+---
+
+*Desenvolvido por **Zwei** | © 2026 Zwei Coorporações LTDA. Todos os direitos reservados.*

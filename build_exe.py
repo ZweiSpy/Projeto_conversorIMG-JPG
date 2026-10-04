@@ -7,20 +7,21 @@ import sys
 import os
 
 def build():
-    print("Iniciando compilação do executável PixelCompact.exe...")
+    print("Iniciando compilação do executável ZweiPixelCompact.exe...")
 
     cmd = [
         sys.executable, "-m", "PyInstaller",
         "--noconsole",
         "--onefile",
         "--clean",
-        "--name=PixelCompact",
-        "--icon=icon.ico",
+        "--name=ZweiPixelCompact",
+        "--icon=z-icon.ico",
         "--add-data=index.html;.",
         "--add-data=style.css;.",
         "--add-data=app.js;.",
         "--add-data=vendor;vendor",
-        "--add-data=icon.ico;.",
+        "--add-data=Z-logo.png;.",
+        "--add-data=z-icon.ico;.",
         "desktop_app.py"
     ]
 
@@ -28,7 +29,7 @@ def build():
     result = subprocess.run(cmd)
 
     if result.returncode == 0:
-        exe_path = os.path.abspath(os.path.join("dist", "PixelCompact.exe"))
+        exe_path = os.path.abspath(os.path.join("dist", "ZweiPixelCompact.exe"))
         print("\n" + "=" * 60)
         print("COMPILAÇÃO CONCLUÍDA COM SUCESSO!")
         print(f"Executável gerado em: {exe_path}")

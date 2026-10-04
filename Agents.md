@@ -1,7 +1,7 @@
 # Matriz de Agentes e Papéis (Agents.md)
-## Projeto: Conversor de Imagens para JPG Compacto Web
+## Projeto: Zwei PixelCompact | Conversor de Imagens para JPG Web
 
-Este documento formaliza a estrutura organizacional, as atribuições, os limites de responsabilidade e o protocolo de colaboração entre a liderança humana do projeto e os agentes especialistas autônomos.
+Este documento formaliza a estrutura organizacional, as atribuições, os limites de responsabilidade e o protocolo de colaboração entre a liderança do projeto (**Zwei / Zwei Coorporações LTDA**) e os agentes especialistas autônomos.
 
 ---
 
@@ -9,8 +9,8 @@ Este documento formaliza a estrutura organizacional, as atribuições, os limite
 
 ```
 ┌────────────────────────────────────────────────────────┐
-│               TECH LEAD & PRODUCT OWNER                │
-│                 (Usuário / Humano)                     │
+│       TECH LEAD, DESENVOLVEDOR & PRODUCT OWNER         │
+│             (Zwei / Zwei Coorporações LTDA)            │
 │  - Visão Estratégica, Priorização de Escopo e Releases  │
 └───────────────────────────┬────────────────────────────┘
                             │
@@ -27,7 +27,7 @@ Este documento formaliza a estrutura organizacional, as atribuições, os limite
 │ SENIOR FRONTEND DEVELOPER │ │   SENIOR UI/UX DESIGNER   │
 │    (Antigravity Agent)    │ │    (Antigravity Agent)    │
 │ - Canvas API, Decoders,   │ │ - Design System, Dark     │
-│   Web Workers, JSZip      │ │   Glassmorphism, Feedback │
+│   Web Workers, JSZip      │ │   Glassmorphism, Branding │
 └─────────────┬─────────────┘ └───────────┬───────────────┘
               │                           │
               └─────────────┬─────────────┘
@@ -45,9 +45,10 @@ Este documento formaliza a estrutura organizacional, as atribuições, os limite
 
 ## 2. Descrição Detalhada dos Papéis e Responsabilidades
 
-### 2.1. Tech Lead & Product Owner (PO)
-- **Ocupante:** Usuário
+### 2.1. Tech Lead, Desenvolvedor Principal & Product Owner (PO)
+- **Ocupante:** **Zwei** (Tech Lead & PO, Zwei Coorporações LTDA)
 - **Atribuições Principais:**
+  - Liderança técnica e desenvolvimento central do projeto.
   - Definir os objetivos de negócio, requisitos funcionais e prioridades de entrega.
   - Atuar como autoridade máxima de aprovação sobre o escopo (o que entra e o que não entra).
   - Validar e aprovar os marcos e entregáveis de cada fase do projeto.
@@ -113,3 +114,7 @@ Este documento formaliza a estrutura organizacional, as atribuições, os limite
 3. **Desenvolvimento:** O Senior Frontend Developer codifica a funcionalidade seguindo as especificações do `sdd.md`.
 4. **Inspeção & QA:** O Senior QA & Security Engineer executa a verificação dos critérios de aceitação e testes de borda.
 5. **Aprovação Final:** O resultado consolidado é submetido ao Tech Lead & PO para validação e fechamento da fase.
+ 
+---
+
+*Desenvolvido por **Zwei** | © 2026 Zwei Coorporações LTDA. Todos os direitos reservados.*

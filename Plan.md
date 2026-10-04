@@ -1,22 +1,22 @@
 # Plano de Projeto (Plan.md)
-## Conversor de Imagens para JPG Compacto Web
+## Zwei PixelCompact | Conversor de Imagens para JPG Compacto Web
 
 ---
 
 ## 1. Visão Geral e Contexto
 
-O **Conversor de Imagens para JPG Compacto Web** é uma aplicação web focada em alta performance, privacidade absoluta e facilidade de uso, projetada para converter imagens em múltiplos formatos (PNG, HEIC/HEIF de smartphones Apple, BMP, WEBP, TIFF, etc.) em arquivos **JPG/JPEG ultra-otimizados e compactos para a web**.
+O **Zwei PixelCompact** é uma aplicação corporativa e pessoal de alta performance, desenvolvida por **Zwei** para a **Zwei Coorporações LTDA**, focada em máxima velocidade, privacidade absoluta e facilidade de uso. Projetada para converter imagens em múltiplos formatos (`PNG`, `HEIC/HEIF` de smartphones Apple, `BMP`, `WEBP`, `TIFF`, etc.) em arquivos **JPG/JPEG ultra-otimizados e compactos para a web**.
 
-Todo o processamento é executado **100% no navegador (Client-Side)**, garantindo que nenhuma imagem seja enviada para servidores de terceiros, eliminando custos de infraestrutura e assegurando total privacidade aos usuários.
+Todo o processamento é executado **100% no dispositivo (Client-Side / Local)**, garantindo que nenhuma imagem seja enviada para servidores de terceiros ou nuvem, eliminando custos de infraestrutura e assegurando total sigilo aos usuários.
 
 ---
 
 ## 2. Estrutura de Liderança e Papéis
 
-- **Tech Lead & Product Owner (PO):** Usuário (Direção técnica superior, validação de escopo, aprovação de releases e decisões de negócio).
+- **Tech Lead, Desenvolvedor Principal & Product Owner (PO):** **Zwei** (Direção técnica, validação de escopo, aprovação de releases e decisões de negócio).
 - **Senior Software Engineer / Solutions Architect (Agent Antigravity):** Arquitetura técnica, pipeline de dados de imagem, ciclo de vida de memória, concorrência e conformidade client-side.
 - **Senior Frontend Developer (Agent Antigravity):** Implementação semântica, Canvas API, File/Blob APIs, integração de decodificadores e empacotamento ZIP.
-- **Senior UI/UX Designer (Agent Antigravity):** Design system moderno (dark mode, glassmorphism), micro-interações, acessibilidade e experiência fluida.
+- **Senior UI/UX Designer (Agent Antigravity):** Design system corporativo moderno (dark mode glassmorphism com a identidade visual Zwei), micro-interações, acessibilidade e experiência fluida.
 - **Senior QA & Security Engineer (Agent Antigravity):** Validação de integridade, testes de formatos de borda, resiliência de memória e prevenção de falhas.
 
 ---
@@ -120,7 +120,8 @@ gantt
 - Implementação do backend desktop via `pywebview` e Microsoft WebView2 (`desktop_app.py`).
 - Integração bidirecional com a API do Windows Explorer (`select_folder()` e gravação direta no disco rígido sem passar por ZIP).
 - Detecção dinâmica no frontend para exibir botão "Salvar na Pasta do PC".
-- Geração de ícone de alta resolução `icon.ico` e compilação do executável autônomo `dist/PixelCompact.exe` via PyInstaller com flag `--noconsole`.
+- Geração e integração do ícone oficial `z-icon.ico` e logo `Z-logo.png`.
+- Compilação do executável autônomo `dist/ZweiPixelCompact.exe` via PyInstaller com flag `--noconsole` e suporte standalone.
 
 ---
 
@@ -130,6 +131,10 @@ gantt
 2. **Rejeição Rígida:** Rejeita explicitamente vídeos, GIFs e formatos inválidos com mensagem informativa ao usuário.
 3. **Privacidade:** Nenhuma requisição HTTP de upload de arquivos de imagem é disparada; 100% da conversão ocorre localmente.
 4. **Resiliência de Memória:** O navegador não trava nem apresenta congelamento perceptível durante a conversão de lotes com até 20 imagens.
-5. **Usabilidade & Estética:** Interface com nota máxima de acabamento visual, responsiva em desktop e mobile, com badges claros de redução de tamanho.
-6. **Suporte Desktop:** Disponibilização de executável `.exe` independente para Windows com recurso de salvamento direto em pastas locais.
+5. **Usabilidade & Estética:** Interface com nota máxima de acabamento visual, responsiva em desktop e mobile, com identidade visual da Zwei Coorporações LTDA.
+6. **Suporte Desktop:** Disponibilização de executável `ZweiPixelCompact.exe` independente para Windows com recurso de salvamento direto em pastas locais.
 7. **Entrega dos Arquivos:** Todos os arquivos de documentação (`Plan.md`, `Agents.md`, `readme.md`, `sdd.md`) sincronizados e em conformidade estrita.
+
+---
+
+*Desenvolvido por **Zwei** | © 2026 Zwei Coorporações LTDA. Todos os direitos reservados.*

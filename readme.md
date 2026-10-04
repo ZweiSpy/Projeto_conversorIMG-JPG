@@ -1,6 +1,6 @@
-# 🖼️ Conversor de Imagens para JPG Compacto Web
+# 🖼️ Zwei PixelCompact | Conversor de Imagens para JPG Web
 
-> **Conversão de imagens de alta performance, 100% no navegador (Client-Side), com foco em máxima compactação para a web e privacidade absoluta.**
+> **Zwei PixelCompact: Conversão de imagens de alta performance da Zwei Coorporações LTDA, 100% no navegador e desktop, com foco em máxima compactação para a web e privacidade absoluta.**
 
 [![Privacidade: 100% Client-Side](https://img.shields.io/badge/Privacidade-100%25%20Client--Side-brightgreen.svg)](#segurança-e-privacidade)
 [![Zero Uploads para Servidor](https://img.shields.io/badge/Servidor-Zero%20Uploads-blue.svg)](#segurança-e-privacidade)
@@ -11,18 +11,18 @@
 
 ## 📌 Visão Geral
 
-O **Conversor de Imagens para JPG Compacto Web** é uma solução moderna e elegante criada para resolver um problema recorrente: a necessidade de converter fotos pesadas e formatos proprietários ou sem compressão (como fotos `.heic` tiradas com iPhone, gráficos `.png` pesados ou bitmaps `.bmp` do Windows) em imagens `.jpg` leves, compatíveis e perfeitamente otimizadas para publicação na internet, sites e redes sociais.
+O **Zwei PixelCompact** é uma solução moderna e elegante da **Zwei Coorporações LTDA** criada para resolver um problema recorrente: a necessidade de converter fotos pesadas e formatos proprietários ou sem compressão (como fotos `.heic` tiradas com iPhone, gráficos `.png` pesados ou bitmaps `.bmp` do Windows) em imagens `.jpg` leves, compatíveis e perfeitamente otimizadas para publicação na internet, sites e redes sociais.
 
-Diferente de conversores online convencionais que exigem o upload de seus arquivos para servidores desconhecidos, este conversor processa **tudo localmente no seu próprio navegador**. Suas imagens nunca saem do seu computador ou celular.
+Diferente de conversores online convencionais que exigem o upload de seus arquivos para servidores desconhecidos, este conversor processa **tudo localmente no seu próprio navegador ou aplicativo desktop**. Suas imagens nunca saem do seu computador ou celular.
 
 ---
 
 ## 📸 Demonstração da Interface
 
-![PixelCompact JPG - Aplicação em Execução](docs/screenshots/app_full_page_converted.png)
+![Zwei PixelCompact - Aplicação em Execução com Nova Identidade Visual](docs/screenshots/zwei_pixelcompact_preview.png)
 
 <p align="center">
-  <em>Processamento em lote com estatísticas globais, badge de economia de peso (-98%) e cards individuais.</em>
+  <em>Interface moderna Dark Glassmorphism com a nova identidade visual da Zwei Coorporações LTDA e motor de conversão client-side.</em>
 </p>
 
 ---
@@ -39,6 +39,7 @@ Diferente de conversores online convencionais que exigem o upload de seus arquiv
 - **Feedback Visual com Métricas Reais:** Visualize instantaneamente o tamanho original, o novo tamanho e a porcentagem exata de economia (ex: `3.2 MB → 480 KB (-85%)`).
 - **Exportação Ágil:**
   - Download individual de cada arquivo convertido com um clique.
+  - Gravação direta em pastas locais no aplicativo Desktop.
   - Download em lote de todas as imagens empacotadas em um arquivo `.ZIP` através da biblioteca JSZip.
 - **Design Moderno e Responsivo:** Interface com tema escuro sofisticado (*Dark Glassmorphism*), animações fluidas e suporte tanto para telas ultrawide quanto para dispositivos móveis.
 
@@ -76,7 +77,7 @@ Execute como um programa nativo do Windows com ícone próprio na barra de taref
 
 1. Vá até a pasta `dist/` e execute o arquivo:
    ```text
-   dist/PixelCompact.exe
+   dist/ZweiPixelCompact.exe
    ```
 2. *(Opcional)* Para recompilar o executável a qualquer momento:
    ```bash
@@ -115,24 +116,24 @@ Em seguida, acesse no navegador: `http://localhost:8080`.
 - **Bibliotecas Client-Side Auxiliares:**
   - `heic2any`: Decodificação local de arquivos Apple HEIC/HEIF baseada em libheif Wasm.
   - `JSZip`: Agrupamento e compressão dos arquivos convertidos em formato `.ZIP` diretamente na memória do navegador.
+- **Camada Desktop:** Python `pywebview` integrado ao Microsoft WebView2 nativo do Windows.
 
 ---
 
 ## 🔒 Segurança e Privacidade
 
-1. **Privacidade Garantida por Design:** Todas as operações ocorrem na memória RAM temporária da sua aba do navegador. Nenhuma imagem é gravada em discos de servidores ou enviada para APIs externas.
-2. **Higienização de Nomes de Arquivos:** Nomes de arquivos são sanitizados contra caracteres especiais e sequências maliciosas (`../`) ao gerar os downloads individuais ou arquivos ZIP.
-3. **Prevenção de Esgotamento de Memória:** O sistema emprega uma fila assíncrona controlada, garantindo que mesmo ao selecionar dezenas de fotos de alta resolução (como fotos de 48 megapixels), a aba do navegador não sofra travamento ou erro de Out of Memory (OOM).
+1. **Privacidade Garantida por Design:** Todas as operações ocorrem na memória RAM temporária da sua aba do navegador ou processo desktop. Nenhuma imagem é gravada em servidores remotos.
+2. **Higienização de Nomes de Arquivos:** Nomes de arquivos são sanitizados contra caracteres especiais e sequências maliciosas (`../`) ao gerar os downloads individuais, arquivos ZIP ou gravação direta em disco.
+3. **Prevenção de Esgotamento de Memória:** O sistema emprega uma fila assíncrona controlada, garantindo que mesmo ao selecionar dezenas de fotos de alta resolução, o aplicativo não sofra travamento.
 
 ---
 
-## 👥 Equipe do Projeto
+## 👥 Equipe e Direitos
 
-- **Tech Lead & Product Owner (PO):** Usuário
-- **Senior Software Engineer:** Antigravity AI Agent
-- **Senior Frontend Developer:** Antigravity AI Agent
-- **Senior UI/UX Designer:** Antigravity AI Agent
-- **Senior QA & Security Engineer:** Antigravity AI Agent
+- **Titular:** **Zwei Coorporações LTDA**
+- **Desenvolvedor, Tech Lead & Product Owner (PO):** **Zwei**
+- **Arquitetura & Engenharia de IA:** Antigravity AI Agents
+- **Direitos:** © 2026 Zwei Coorporações LTDA. Todos os direitos reservados.
 
 ---
 
@@ -140,4 +141,4 @@ Em seguida, acesse no navegador: `http://localhost:8080`.
 
 - [Plan.md](file:///c:/Users/Micro/Documents/Projeto_converterIMG_to_JPG/Plan.md) - Cronograma detalhado, fases e critérios de aceitação.
 - [Agents.md](file:///c:/Users/Micro/Documents/Projeto_converterIMG_to_JPG/Agents.md) - Organograma da equipe e limites de atuação dos especialistas.
-- [SDD.md](file:///c:/Users/Micro/Documents/Projeto_converterIMG_to_JPG/sdd.md) - Especificação Técnica e Design de Sistema Detalhado.
+- [sdd.md](file:///c:/Users/Micro/Documents/Projeto_converterIMG_to_JPG/sdd.md) - Especificação Técnica e Design de Sistema Detalhado.
