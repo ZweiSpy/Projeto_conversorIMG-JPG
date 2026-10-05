@@ -4,14 +4,14 @@
 
 [![Privacidade: 100% Client-Side](https://img.shields.io/badge/Privacidade-100%25%20Client--Side-brightgreen.svg)](#segurança-e-privacidade)
 [![Zero Uploads para Servidor](https://img.shields.io/badge/Servidor-Zero%20Uploads-blue.svg)](#segurança-e-privacidade)
-[![Formatos: PNG%2C%20HEIC%2C%20BMP%2C%20WEBP%2C%20TIFF](https://img.shields.io/badge/Formatos-PNG%20%7C%20HEIC%20%7C%20BMP%20%7C%20WEBP-purple.svg)](#matriz-de-compatibilidade)
-[![Saída: JPG Web Otimizado](https://img.shields.io/badge/Sa%C3%ADda-JPG%20Web%20Otimizado-orange.svg)](#otimização-para-web)
+[![Formatos: 26 Famílias • 44 Extensões](https://img.shields.io/badge/Formatos-26%20Fam%C3%ADlias%20%E2%80%A2%2044%20Extens%C3%B5es-purple.svg)](#matriz-de-compatibilidade)
+[![Saída: JPG Web & WebP Otimizado](https://img.shields.io/badge/Sa%C3%ADda-JPG%20Web%20%7C%20WebP-orange.svg)](#otimização-para-web)
 
 ---
 
 ## 📌 Visão Geral
 
-O **Zwei PixelCompact** é uma solução moderna e elegante da **Zwei Coorporações LTDA** criada para resolver um problema recorrente: a necessidade de converter fotos pesadas e formatos proprietários ou sem compressão (como fotos `.heic` tiradas com iPhone, gráficos `.png` pesados ou bitmaps `.bmp` do Windows) em imagens `.jpg` leves, compatíveis e perfeitamente otimizadas para publicação na internet, sites e redes sociais.
+O **Zwei PixelCompact** é uma solução moderna e elegante da **Zwei Coorporações LTDA** criada para resolver um problema recorrente: a necessidade de converter fotos pesadas, formatos proprietários, imagens gráficas, vetoriais, 3D ou fotos profissionais RAW de câmeras em imagens `.jpg` e `.webp` leves, compatíveis e perfeitamente otimizadas para publicação na internet, sites e redes sociais.
 
 Diferente de conversores online convencionais que exigem o upload de seus arquivos para servidores desconhecidos, este conversor processa **tudo localmente no seu próprio navegador ou aplicativo desktop**. Suas imagens nunca saem do seu computador ou celular.
 
@@ -24,6 +24,15 @@ Diferente de conversores online convencionais que exigem o upload de seus arquiv
 <p align="center">
   <em>Interface moderna Dark Glassmorphism com os 14 upgrades avançados da Zwei Coorporações LTDA e motor de conversão acelerado.</em>
 </p>
+
+### 🌐 Dropzone com Suporte Universal a 26 Famílias (44 Extensões)
+![Dropzone com Tags de Formatos e Modal](docs/screenshots/08_pixelcompact_formats_dropzone.png)
+
+### 🗂️ Modal Exclusivo de Especificações dos 26 Formatos Suportados
+![Modal de Formatos Suportados](docs/screenshots/09_pixelcompact_formats_modal.png)
+
+### ⚡ Conversão de Formatos Heterogêneos (SVG, TGA, Netpbm, Câmera RAW DNG)
+![Cards com Badges de Categoria](docs/screenshots/10_pixelcompact_formats_converted_cards.png)
 
 ### 🔍 Comparativo Split-Screen Interativo com Fidelidade SSIM
 ![Comparativo Split-Screen Interativo](docs/screenshots/03_pixelcompact_splitscreen_modal.png)
@@ -104,15 +113,35 @@ Diferente de conversores online convencionais que exigem o upload de seus arquiv
 
 ## 🎯 Matriz de Compatibilidade
 
-### ✅ Formatos de Entrada Suportados
-| Formato | Extensões | Descrição / Tratamento |
-| :--- | :--- | :--- |
-| **PNG** | `.png` | Gráficos e capturas de tela. O canal de transparência é mesclado de forma suave em fundo branco. |
-| **HEIC / HEIF** | `.heic`, `.heif` | Fotos de alta eficiência tiradas em iPhones/iPads. Decodificado via biblioteca WebAssembly. |
-| **BMP** | `.bmp` | Imagens bitmap sem compressão comuns no ambiente Windows. |
-| **WEBP** | `.webp` | Formato moderno do Google, convertido para compatibilidade universal em JPG. |
-| **TIFF** | `.tiff`, `.tif` | Imagens brutas ou de digitalização fotográfica de alta fidelidade. |
-| **JPG / JPEG** | `.jpg`, `.jpeg` | Recompressão de fotos existentes para reduzir o peso para a web. |
+### ✅ Formatos de Entrada Suportados (26 Famílias • 44 Extensões)
+| Categoria | Família | Extensões | Descrição / Pipeline de Decodificação |
+| :--- | :--- | :--- | :--- |
+| **Web & Modernos** | PNG & APNG | `.png`, `.apng` | Flattening automático de transparência alfa sobre fundo branco. |
+| **Web & Modernos** | JPEG Padrão & JFIF | `.jpg`, `.jpeg`, `.jfif` | Recompressão e otimização para redução de payload web. |
+| **Web & Modernos** | Google WebP | `.webp` | Formato moderno de alta densidade, compatível com Web Workers. |
+| **Web & Modernos** | Windows Bitmap | `.bmp`, `.dib` | Imagens sem compressão comuns no ambiente Windows. |
+| **Web & Modernos** | AVIF Moderno | `.avif` | Formato AV1 de próxima geração via Canvas/Browser nativo. |
+| **Vetoriais** | Scalable Vector Graphics | `.svg`, `.svgz` | Rasterização vetorial via Canvas 2D preservando viewBox. |
+| **Ícones** | Windows Icon & Cursor | `.ico`, `.cur` | Extração do sub-bitmap de maior resolução do contêiner ICO. |
+| **Mobile & Apple** | High Efficiency Container | `.heic`, `.heif`, `.heics`, `.heifs` | Decodificação assíncrona local via Wasm (`heic2any`). |
+| **Gráfica & Editorial** | Tagged Image File Format | `.tiff`, `.tif` | Suporte a PackBits, LZW e descompactado para editoração. |
+| **Design & 3D** | Adobe Photoshop | `.psd`, `.psb` | Camada de visualização mesclada (*merged composite preview*). |
+| **Design & 3D** | Truevision Targa | `.tga`, `.tpic` | Suporte a 24/32 bits e compressão RLE para games e 3D. |
+| **Design & 3D** | DirectDraw Surface | `.dds` | Texturas de jogos nos formatos descompactados e DXT/BC. |
+| **Design & 3D** | Radiance HDRI | `.hdr` | Imagens 32-bit RGBE com tone-mapping Reinhard automático. |
+| **Câmeras RAW** | Adobe Digital Negative | `.dng` | Padrão aberto da Adobe com extração instantânea do preview. |
+| **Câmeras RAW** | Canon RAW | `.cr2`, `.cr3` | Câmeras Canon EOS com extração binária SOI/EOI em <15ms. |
+| **Câmeras RAW** | Nikon Electronic Format | `.nef`, `.nrw` | Câmeras Nikon D-Series e Z-Series. |
+| **Câmeras RAW** | Sony Alpha RAW | `.arw`, `.sr2`, `.srf` | Câmeras Sony Alpha e Cyber-shot. |
+| **Câmeras RAW** | Olympus RAW | `.orf` | Câmeras Olympus / OM System. |
+| **Câmeras RAW** | Fujifilm RAW | `.raf` | Câmeras Fujifilm X-Series e GFX. |
+| **Câmeras RAW** | Panasonic Lumix RAW | `.rw2` | Câmeras Panasonic Lumix Micro 4/3 e Full Frame. |
+| **Câmeras RAW** | Pentax Electronic File | `.pef` | Câmeras DSLR Pentax. |
+| **Científicos & Retrô** | Netpbm Portable Pixmap | `.ppm` | Formato RGB científico Netpbm (ASCII P3 e Binário P6). |
+| **Científicos & Retrô** | Netpbm Graymap | `.pgm` | Tons de cinza científicos (ASCII P2 e Binário P5). |
+| **Científicos & Retrô** | Netpbm Bitmap & Any | `.pbm`, `.pnm` | Monocromático 1-bit e formato genérico PNM. |
+| **Científicos & Retrô** | ZSoft Paintbrush | `.pcx` | Formato clássico PC Paintbrush com paleta VGA de 256 cores. |
+| **Científicos & Retrô** | Wireless Bitmap | `.wbmp` | Bitmaps monocromáticos de protocolos móveis WAP. |
 
 ### 🚫 O que NÃO Entra no Escopo (Formatos Bloqueados)
 | Item Bloqueado | Motivo da Exclusão |
@@ -193,11 +222,29 @@ O projeto conta com uma suíte completa de testes automatizados cobrindo **100% 
 # 1. Executar testes E2E das 14 melhorias via Microsoft Edge headless:
 node tests/test_all_14_upgrades.js
 
-# 2. Executar testes unitários do backend Desktop (Windows Registry, Notificações e I/O):
+# 2. Executar testes E2E de compatibilidade universal (26 famílias / 44 extensões):
+node tests/test_image_formats_expansion.js
+
+# 3. Executar testes unitários do backend Desktop (Windows Registry, Notificações e I/O):
 .venv\Scripts\python.exe -m unittest tests/test_desktop_backend.py
 ```
 
-### Resultados da Suíte (100% PASS):
+### Resultados das Suítes (100% PASS):
+
+#### 🚀 Expansão de Formatos de Imagem (11/11 Testes PASS):
+- `✔ Teste 1: Módulo UniversalImageDecoder Ativo (44 extensões mapeadas e ativas)`
+- `✔ Teste 2: Modal Informativo de 26 Formatos (Abertura por botão na dropzone e fechamento validados)`
+- `✔ Teste 3: Formato Vetorial SVG (Rasterização vetorial para JPG: 200x200px)`
+- `✔ Teste 4: Formato Targa TGA 3D (Decodificação Truevision RGB/RLE: 120x120px com 97% de economia)`
+- `✔ Teste 5: Formato Netpbm PPM (PPM P3/P6 RGB científico convertido com sucesso: 120x120px)`
+- `✔ Teste 6: Formato Netpbm PGM (PGM tons de cinza convertido para JPG: 100x100px)`
+- `✔ Teste 7: Formato Windows Icon ICO (Ícone 64x64 extraído e convertido com sucesso)`
+- `✔ Teste 8: Formato Gráfica TIFF (TIFF 24-bit 100x100px decodificado e convertido com sucesso)`
+- `✔ Teste 9: Formato DSLR/Mirrorless RAW (Preview JPEG extraído em <15ms do contêiner DNG: 160x120px)`
+- `✔ Teste 10: Segurança e Escopo Negativo: Bloqueio Estrito de Vídeos (.mp4 sumariamente rejeitado com toast)`
+- `✔ Teste 11: Segurança e Escopo Negativo: Bloqueio de GIFs Animados (.gif sumariamente rejeitado para preservar animação)`
+
+#### 🛠️ Suíte dos 14 Upgrades de Desempenho (14/14 Testes PASS):
 - `✔ Teste 1: Split-Screen Interativo Antes vs Depois (cortina 35%, zoom 2x e grid view validados)`
 - `✔ Teste 2: Medidor Científico de Fidelidade Visual (SSIM) (score 99.9%, badge presente)`
 - `✔ Teste 3: Conversão Paralela Multi-Thread Dinâmica (⚡ Multi-Thread Dinâmica com Safe Headroom | Modos Auto, Turbo, Eco e Manual)`
@@ -212,7 +259,9 @@ node tests/test_all_14_upgrades.js
 - `✔ Teste 12: Suporte a Saída WebP (JPG / WebP / Ambos) (Blob WEBP e modo duplo validados)`
 - `✔ Teste 13: Gerador de Tags HTML <picture> & srcset (código de alta performance validado)`
 - `✔ Teste 14: Arrastar e Soltar de Pastas Inteiras (Folder Drop) (varredura recursiva de diretórios validada)`
-- `✔ Backend Windows (unittest): 7/7 Testes PASS (incluindo get_system_info e CPU hardware detection)`
+
+#### 🖥️ Backend Windows Desktop (7/7 Testes PASS):
+- `✔ 7/7 Testes unitários com unittest (Registro do Windows, CPU hardware detection, decodificação Base64 e notificações PowerShell)`
 
 ---
 

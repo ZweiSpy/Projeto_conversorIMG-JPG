@@ -24,26 +24,31 @@ Todo o processamento é executado **100% no dispositivo (Client-Side / Local)**,
 ## 3. Matriz de Escopo
 
 ### 3.1. O que VAMOS Fazer (No Escopo)
-- [x] **Formatos de Entrada Suportados:**
-  - `PNG` (Portable Network Graphics - com flattening de transparência sobre fundo branco configurável)
-  - `HEIC / HEIF` (High Efficiency Image Container do ecossistema iOS/macOS)
-  - `BMP` (Bitmap tradicional do Windows)
-  - `WEBP` (Formato moderno WebP)
-  - `TIFF / TIF` (Tagged Image File Format)
-  - `JPG / JPEG` (Para recompressão e otimização para web)
-- [x] **Formato de Saída Exclusivo:**
+- [x] **Formatos de Entrada Suportados (26 Famílias • 44 Extensões de Imagem):**
+  - **Web & Modernos:** `PNG`, `APNG`, `JPG / JPEG / JFIF`, `WEBP`, `BMP`, `DIB`, `AVIF`.
+  - **Vetoriais & Ícones:** `SVG`, `SVGZ` (rasterização via Canvas nativo), `ICO`, `CUR` (extração de sub-imagem de maior resolução).
+  - **Mobile & Apple:** `HEIC`, `HEIF`, `HEICS`, `HEIFS` (via pipeline Wasm `heic2any`).
+  - **Gráfica & Editorial:** `TIFF`, `TIF` (PackBits, LZW e descompactado).
+  - **Design, 3D & Gaming:** `PSD`, `PSB` (Photoshop merged preview composite), `TGA`, `TPIC` (Truevision Targa RGB/RGBA/RLE), `DDS` (DirectDraw Surface BC1-BC3), `HDR` (Radiance HDRI RGBE com tone-mapping Reinhard).
+  - **Câmeras Profissionais RAW (DSLR/Mirrorless):** `DNG`, `CR2`, `CR3` (Canon), `NEF`, `NRW` (Nikon), `ARW`, `SR2`, `SRF` (Sony), `ORF` (Olympus), `RAF` (Fujifilm), `RW2` (Panasonic Lumix), `PEF` (Pentax) com extração instantânea (<15ms) de preview JPEG incorporado de alta resolução.
+  - **Científicos & Retrô:** `PPM`, `PGM`, `PBM`, `PNM` (Netpbm ASCII P1-P3 e Binário P4-P6), `PCX` (ZSoft Paintbrush com paleta 256 cores VGA), `WBMP` (Wireless Application Protocol Bitmap).
+- [x] **Formatos de Saída:**
   - `JPG` compacto, otimizado para web com subamostragem cromática e qualidade ajustável (presets: Ultra Compact ~70%, Equilibrado ~82%, Alta Qualidade ~92%).
+  - `WEBP` moderno com alta compressão e canal alfa preservado.
+  - `Ambos` (geração dual de pacote ZIP com JPG + WebP para `<picture>` tags).
 - [x] **Processamento 100% Client-Side:**
-  - Nenhuma imagem trafega pela rede ou servidores.
+  - Nenhuma imagem trafega pela rede ou servidores. Decodificação e codificação locais no navegador e no WebView2 desktop.
 - [x] **Processamento em Lote (Batch):**
-  - Arrastar e soltar múltiplas imagens simultâneas.
-  - Fila de conversão controlada para evitar consumo excessivo de memória.
+  - Arrastar e soltar múltiplas imagens simultâneas ou pastas recursivas inteiras.
+  - Pool de Web Workers adaptativo com escalabilidade multithread dinâmica.
 - [x] **Exportação Flexível:**
   - Download individual de cada JPG gerado.
   - Download em lote agrupado em um único arquivo `.ZIP`.
+  - Salvamento direto em pasta do sistema operacional no modo Desktop Windows.
 - [x] **Feedback Visual & Métricas:**
   - Comparativo de tamanho antes vs. depois com percentual de economia (ex: `2.8 MB → 410 KB (-85%)`).
-  - Pré-visualização lado a lado ou modal interativo.
+  - Badges coloridos por categoria de formato (Web, RAW, Design, Vetorial, Mobile, Gráfica, Ícone, Científico).
+  - Comparador Split-Screen com cortina antes vs. depois e cálculo científico de SSIM.
 
 ### 3.2. O que NÃO VAMOS Fazer (Estritamente Fora de Escopo)
 - [ ] **Conversão de Vídeos:** Proibida conversão ou suporte a arquivos de vídeo (`.mp4`, `.mov`, `.avi`, `.mkv`, etc.).
@@ -146,29 +151,43 @@ gantt
 13. **Integração com Menu de Contexto do Windows Explorer:** Registro no sistema (`HKCU\Software\Classes\*\shell\ZweiPixelCompact`) permitindo clique direito em qualquer imagem para abrir diretamente no app.
 14. **Notificações Nativas e Feedback Sonoro:** Disparo de notificações Toast do Windows (via PowerShell / Web Notifications) e síntese sonora de conclusão de lote.
 
-### Fase 9: Testes Automatizados E2E e Unitários (Status: Concluída - 100% PASS)
-- **Suite E2E Frontend (`tests/test_all_14_upgrades.js`):**
-  - Execução automatizada via protocolo CDP no Microsoft Edge em modo headless.
-  - Cobertura completa dos 14 cenários reais do dia a dia (pool adaptativo de workers, SSIM, WebP, busca binária de KB, renomeador, crop, EXIF, estatísticas, atalhos, split modal, folder drop, etc.).
-  - Resultado: **14/14 testes aprovados (100% PASS)**.
-- **Suite Backend Windows (`tests/test_desktop_backend.py`):**
-  - Testes unitários com `unittest` cobrindo adição/remoção de chaves no Registro do Windows, especificações de hardware (CPU count e plataforma), disparos de notificação PowerShell, decodificação Base64/salvamento em disco e ingestão de argumentos CLI.
-  - Resultado: **7/7 testes aprovados (100% PASS)**.
-- **Recompilação do Executável Nativo:**
-  - Binário standalone `dist/ZweiPixelCompact.exe` reempacotado com PyInstaller incorporando todos os upgrades e motor adaptativo de threads.
+### Fase 10: Expansão Universal de Formatos de Imagem (26 Famílias • 44 Extensões) (Status: Concluída - 100% PASS)
+- **Módulo Decodificador Universal (`image_decoders.js`):**
+  - Implementação modular com decodificação 100% *client-side* sem dependências pesadas de backend ou rede.
+  - Suporte completo às 26 famílias de imagens (44 extensões no total):
+    - *Modern & Web:* PNG, APNG, JPG, JPEG, JFIF, WEBP, BMP, DIB, AVIF.
+    - *Vetoriais & Ícones:* SVG, SVGZ (rasterização via Canvas 2D), ICO, CUR (extração de bitmap de mais alta resolução).
+    - *Mobile & Apple:* HEIC, HEIF, HEICS, HEIFS (pipeline Wasm).
+    - *Gráfica:* TIFF, TIF (PackBits, LZW, Raw).
+    - *Design & 3D:* PSD, PSB (camada de composite mesclada do Photoshop), TGA, TPIC (Truevision Targa 24/32 bits e RLE), DDS (DirectDraw Surface), HDR (Radiance RGBE com tone-mapping Reinhard).
+    - *Câmeras DSLR/Mirrorless RAW:* DNG, CR2, CR3, NEF, NRW, ARW, SR2, SRF, ORF, RAF, RW2, PEF (varredura ultra-rápida de marcadores SOI/EOI e extração de JPEG embutido em <15ms).
+    - *Científicos & Retrô:* PPM, PGM, PBM, PNM (Netpbm P1 a P6), PCX (ZSoft Paintbrush com paleta VGA), WBMP.
+- **Interface e Categorização Visual:**
+  - Modal moderno `#formatsModal` com listagem categorizada, descrição técnica e chips de extensão.
+  - Badges cromáticos dinâmicos nos cards de imagem (`.badge-web`, `.badge-raw`, `.badge-design`, `.badge-vector`, `.badge-mobile`, `.badge-print`, `.badge-icon`, `.badge-sci`).
+  - Dropzone com tags visuais e botão disparador `+26 Formatos (RAW, PSD, SVG, etc.)`.
+- **Suite de Testes Automatizada (`tests/test_image_formats_expansion.js`):**
+  - Validação E2E automatizada via CDP Headless no Edge:
+    - 44 extensões mapeadas.
+    - Abertura e fechamento do modal informativo.
+    - Conversão ponta a ponta de SVG, TGA, Netpbm PPM, Netpbm PGM, ICO, TIFF e Camera RAW DNG.
+    - Testes de escopo negativo: Bloqueio estrito de arquivos `.mp4` e `.gif`.
+    - Resultado: **11/11 testes aprovados (100% PASS)**.
+- **Recompilação do Executável Nativo Windows:**
+  - Binário `dist/ZweiPixelCompact.exe` reempacotado com PyInstaller incorporando `image_decoders.js`.
 
 ---
 
 ## 5. Critérios de Aceitação (Definition of Done - DoD)
 
-1. **Compatibilidade Ampla de Formatos:** Converte com sucesso imagens PNG, HEIC, BMP, WEBP e TIFF para JPG e WebP.
-2. **Rejeição Rígida de Não-Imagens:** Rejeita explicitamente vídeos, GIFs animados e arquivos forjados com notificação imediata.
+1. **Compatibilidade Universal de Formatos:** Converte com sucesso 26 famílias e 44 extensões de imagens para JPG e WebP de alta qualidade.
+2. **Rejeição Rígida de Não-Imagens:** Rejeita explicitamente vídeos (`.mp4`, `.mov`, etc.), GIFs animados e arquivos forjados com notificação imediata.
 3. **Privacidade Absoluta:** 100% de processamento local no dispositivo (Zero Cloud, Zero Network).
 4. **Resiliência e Desempenho Multi-Thread:** Suporte a Web Workers com isolamento de threads e sem congelamento da UI.
 5. **Precisão de Compressão e Métricas:** Cálculo de SSIM em tempo real e modo de busca binária por tamanho alvo em KB.
 6. **Usabilidade & Estética Corporativa:** Interface moderna Dark Glassmorphism com identidade Zwei Coorporações LTDA, logo oficial e ícone de alta resolução.
 7. **Suporte Desktop e Sistema Operacional:** Executável `ZweiPixelCompact.exe` independente para Windows, suporte a menu de contexto do Explorer e notificações do SO.
-8. **Cobertura de Testes Automatizados:** 100% de aprovação em todos os testes unitários de backend e testes E2E automatizados.
+8. **Cobertura de Testes Automatizados:** 100% de aprovação em todos os testes unitários de backend (7/7), testes E2E dos 14 upgrades (14/14) e testes de expansão de formatos (11/11).
 9. **Documentação e Repositório:** Sincronização estrita de `Plan.md`, `sdd.md`, `readme.md`, `walkthrough.md` e repositório Git limpo e versionado.
 
 ---

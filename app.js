@@ -23,12 +23,29 @@
     return Math.min(cores - 2, 16);   // 14 threads em 16 núcleos (reserva 2 para o Windows e teto seguro de 16 para RAM)
   }
 
-  const FORMATS_ALLOWED = [
-    'image/png', 'image/heic', 'image/heif', 'image/bmp', 
-    'image/x-ms-bmp', 'image/webp', 'image/tiff', 'image/jpeg'
+  const EXTENSIONS_ALLOWED = [
+    // Web & Nativos
+    'png', 'jpg', 'jpeg', 'jpe', 'jfif', 'webp', 'bmp', 'dib', 'avif', 'apng', 'svg', 'svgz', 'ico', 'cur',
+    // Mobile / Apple
+    'heic', 'heif', 'heics', 'heifs',
+    // Gráfica & Scanners
+    'tiff', 'tif',
+    // Design, 3D & Games
+    'psd', 'psb', 'tga', 'tpic', 'dds', 'hdr',
+    // Câmeras DSLR / Mirrorless (RAW)
+    'dng', 'cr2', 'cr3', 'nef', 'nrw', 'arw', 'sr2', 'srf', 'orf', 'raf', 'rw2', 'pef',
+    // Científicos & Legados
+    'ppm', 'pgm', 'pbm', 'pnm', 'pcx', 'wbmp'
   ];
 
-  const EXTENSIONS_ALLOWED = ['png', 'heic', 'heif', 'bmp', 'webp', 'tiff', 'tif', 'jpg', 'jpeg'];
+  const FORMATS_ALLOWED = [
+    'image/png', 'image/jpeg', 'image/webp', 'image/bmp', 'image/x-ms-bmp',
+    'image/heic', 'image/heif', 'image/tiff', 'image/svg+xml', 'image/x-icon',
+    'image/vnd.adobe.photoshop', 'image/x-tga', 'image/x-portable-pixmap',
+    'image/x-portable-graymap', 'image/x-portable-bitmap', 'image/x-pcx',
+    'image/avif', 'image/vnd.wap.wbmp'
+  ];
+
   const VIDEO_EXTENSIONS = ['mp4', 'mov', 'avi', 'mkv', 'webm', 'flv', 'wmv', 'm4v'];
 
   // --- 2. Estado Global da Aplicação ---
@@ -185,6 +202,12 @@
   const dismissSnippetBtn = document.getElementById('dismissSnippetBtn');
   const copySnippetBtn = document.getElementById('copySnippetBtn');
   const snippetCodeText = document.getElementById('snippetCodeText');
+
+  // Modal Formatos Suportados
+  const formatsModal = document.getElementById('formatsModal');
+  const openFormatsModalBtn = document.getElementById('openFormatsModalBtn');
+  const closeFormatsModalBtn = document.getElementById('closeFormatsModalBtn');
+  const confirmFormatsModalBtn = document.getElementById('confirmFormatsModalBtn');
 
   // --- 4. Sistema de Notificações Toast ---
   function showToast(message, type = 'warning') {
@@ -708,6 +731,21 @@
     if (openShortcutsBtn) openShortcutsBtn.addEventListener('click', () => shortcutsModal.classList.remove('hidden'));
     if (closeShortcutsBtn) closeShortcutsBtn.addEventListener('click', () => shortcutsModal.classList.add('hidden'));
 
+    // Modal Formatos Suportados
+    if (openFormatsModalBtn) {
+      openFormatsModalBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        formatsModal.classList.remove('hidden');
+      });
+    }
+    if (closeFormatsModalBtn) closeFormatsModalBtn.addEventListener('click', () => formatsModal.classList.add('hidden'));
+    if (confirmFormatsModalBtn) confirmFormatsModalBtn.addEventListener('click', () => formatsModal.classList.add('hidden'));
+    if (formatsModal) {
+      formatsModal.addEventListener('click', (e) => {
+        if (e.target === formatsModal) formatsModal.classList.add('hidden');
+      });
+    }
+
     // Modal Comparativo Split-Screen
     closeModalBtn.addEventListener('click', closeCompareModal);
     compareModal.addEventListener('click', (e) => {
@@ -849,6 +887,7 @@
       statsModal.classList.add('hidden');
       shortcutsModal.classList.add('hidden');
       snippetModal.classList.add('hidden');
+      if (formatsModal) formatsModal.classList.add('hidden');
     }
   }
 
@@ -948,7 +987,7 @@
       }
 
       // Regra 3: Rejeição de Formatos Desconhecidos
-      const isAllowedExt = EXTENSIONS_ALLOWED.includes(ext);
+      const isAllowedExt = EXTENSIONS_ALLOWED.includes(ext) || (window.UniversalImageDecoder && window.UniversalImageDecoder.isSupported(ext));
       const isAllowedMime = FORMATS_ALLOWED.includes(file.type) || (file.type && file.type.startsWith('image/'));
       
       if (!isAllowedExt && !isAllowedMime) {
@@ -958,7 +997,8 @@
 
       // Arquivo válido -> Criar registro
       const id = 'img_' + Math.random().toString(36).substr(2, 9) + '_' + Date.now();
-      const originalExt = ext.toUpperCase() || 'IMG';
+      const formatInfo = window.UniversalImageDecoder ? window.UniversalImageDecoder.getInfo(ext) : { name: ext.toUpperCase(), category: 'web', badgeClass: 'badge-web' };
+      const originalExt = formatInfo.name || ext.toUpperCase() || 'IMG';
       const initialStatus = state.autoConvert ? 'pending' : 'idle';
 
       const item = {
@@ -968,6 +1008,8 @@
         cleanName: file.name.substring(0, file.name.lastIndexOf('.')) || file.name,
         originalSize: file.size,
         originalFormat: originalExt,
+        formatCategory: formatInfo.category || 'web',
+        badgeClass: formatInfo.badgeClass || 'badge-web',
         originalUrl: null,
         status: initialStatus,
         outputBlob: null,
@@ -984,7 +1026,8 @@
         errorMessage: null
       };
 
-      if (originalExt !== 'HEIC' && originalExt !== 'HEIF') {
+      const isWebNative = ['png', 'jpg', 'jpeg', 'jpe', 'jfif', 'webp', 'bmp', 'avif', 'svg'].includes(ext);
+      if (isWebNative) {
         try {
           item.originalUrl = URL.createObjectURL(file);
         } catch (err) {}
@@ -1113,21 +1156,19 @@
     try {
       let imageSource = null;
       let orientation = 1;
-      const ext = item.originalFormat.toLowerCase();
+      const ext = (item.file.name.split('.').pop() || '').toLowerCase();
 
-      // Rota 1: HEIC/HEIF via heic2any Wasm
-      if (ext === 'heic' || ext === 'heif') {
-        if (typeof window.heic2any !== 'function') {
-          throw new Error('Módulo heic2any não disponível.');
+      if (window.UniversalImageDecoder) {
+        const decoded = await window.UniversalImageDecoder.decode(item.file);
+        imageSource = decoded.source;
+        orientation = decoded.orientation || 1;
+        if (decoded.url && !item.originalUrl) {
+          item.originalUrl = decoded.url;
+        } else if (!item.originalUrl && imageSource instanceof HTMLCanvasElement) {
+          try {
+            item.originalUrl = imageSource.toDataURL('image/jpeg', 0.85);
+          } catch (e) {}
         }
-        const convertedBlob = await window.heic2any({
-          blob: item.file,
-          toType: 'image/jpeg',
-          quality: 0.95
-        });
-        const singleBlob = Array.isArray(convertedBlob) ? convertedBlob[0] : convertedBlob;
-        item.originalUrl = URL.createObjectURL(singleBlob);
-        imageSource = await loadImageElement(item.originalUrl);
       } else {
         if (!item.originalUrl) {
           item.originalUrl = URL.createObjectURL(item.file);
@@ -1376,14 +1417,7 @@
     card.className = 'image-card';
     card.id = `card_${item.id}`;
 
-    let tagClass = 'tag-jpg';
-    const fmt = item.originalFormat.toLowerCase();
-    if (fmt === 'png') tagClass = 'tag-png';
-    else if (fmt === 'heic' || fmt === 'heif') tagClass = 'tag-heic';
-    else if (fmt === 'bmp') tagClass = 'tag-bmp';
-    else if (fmt === 'webp') tagClass = 'tag-webp';
-    else if (fmt === 'tiff' || fmt === 'tif') tagClass = 'tag-tiff';
-
+    let tagClass = item.badgeClass || 'badge-web';
     const isIdle = item.status === 'idle';
 
     card.innerHTML = `
@@ -1923,6 +1957,7 @@
   // --- 18. Exposição Pública para Handlers Inline e Testes ---
   window.PixelCompact = {
     state,
+    getItems: () => state.items,
     removeItem,
     openCompare,
     openSnippet,

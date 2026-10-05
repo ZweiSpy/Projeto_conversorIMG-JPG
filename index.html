@@ -19,6 +19,7 @@
   <!-- Bibliotecas Locais (Execução 100% Offline / Client-Side) -->
   <script src="vendor/jszip.min.js"></script>
   <script src="vendor/heic2any.min.js"></script>
+  <script src="image_decoders.js"></script>
 </head>
 <body>
 
@@ -366,7 +367,7 @@
       <!-- Zona de Arraste e Seleção (Dropzone) -->
       <section class="dropzone-section" aria-label="Área de Envio de Arquivos">
         <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Clique ou arraste imagens aqui para converter">
-          <input type="file" id="fileInput" multiple accept=".png,.heic,.heif,.bmp,.webp,.tiff,.tif,.jpg,.jpeg,image/png,image/heic,image/heif,image/bmp,image/webp,image/tiff,image/jpeg" style="display: none;">
+          <input type="file" id="fileInput" multiple accept=".png,.jpg,.jpeg,.jpe,.jfif,.webp,.bmp,.dib,.avif,.apng,.svg,.svgz,.ico,.cur,.heic,.heif,.heics,.heifs,.tiff,.tif,.psd,.psb,.tga,.tpic,.dds,.hdr,.dng,.cr2,.cr3,.nef,.nrw,.arw,.sr2,.srf,.orf,.raf,.rw2,.pef,.ppm,.pgm,.pbm,.pnm,.pcx,.wbmp,image/*" style="display: none;">
           
           <div class="dropzone-glow" aria-hidden="true"></div>
           
@@ -385,11 +386,18 @@
             <!-- Tags de Formatos Aceitos -->
             <div class="format-tags-list">
               <span class="format-tag tag-png">PNG</span>
-              <span class="format-tag tag-heic">HEIC / Apple</span>
-              <span class="format-tag tag-bmp">BMP</span>
+              <span class="format-tag tag-jpg">JPG</span>
               <span class="format-tag tag-webp">WEBP</span>
+              <span class="format-tag tag-avif">AVIF</span>
+              <span class="format-tag tag-heic">HEIC / Apple</span>
+              <span class="format-tag tag-raw">DSLR RAW</span>
+              <span class="format-tag tag-psd">PSD</span>
+              <span class="format-tag tag-svg">SVG</span>
+              <span class="format-tag tag-tga">TGA / 3D</span>
               <span class="format-tag tag-tiff">TIFF</span>
-              <span class="format-tag tag-jpg">JPG / Recompressão</span>
+              <button type="button" class="format-tag tag-more" id="openFormatsModalBtn" title="Ver lista completa de todos os formatos aceitos">
+                +26 Formatos (RAW, PSD, SVG, etc.)
+              </button>
             </div>
 
             <!-- Aviso Importante de Restrição de Escopo -->
@@ -671,6 +679,149 @@
               Copiar Código HTML
             </button>
             <button type="button" class="btn btn-outline" id="dismissSnippetBtn">Fechar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal de Formatos de Imagem Suportados -->
+    <div class="modal-overlay hidden" id="formatsModal" role="dialog" aria-modal="true" aria-labelledby="formatsTitle">
+      <div class="modal-card modal-card-large">
+        <div class="modal-header">
+          <div class="modal-title-box">
+            <h3 class="modal-title" id="formatsTitle">26 Famílias de Formatos Suportados</h3>
+            <p class="modal-subtitle">Compatibilidade Universal • 100% Client-Side • Decodificação Instantânea</p>
+          </div>
+          <button type="button" class="modal-close-btn" id="closeFormatsModalBtn" aria-label="Fechar modal de formatos">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="formats-category-grid">
+
+            <div class="format-category-card">
+              <div class="cat-header">
+                <span class="cat-icon cat-web">🌐</span>
+                <h4 class="cat-title">Web &amp; Nativos</h4>
+              </div>
+              <p class="cat-desc">Formatos padrão de navegadores e sistemas operacionais modernos.</p>
+              <div class="cat-ext-chips">
+                <span class="ext-chip">.png</span>
+                <span class="ext-chip">.jpg / .jpeg</span>
+                <span class="ext-chip">.webp</span>
+                <span class="ext-chip">.avif</span>
+                <span class="ext-chip">.bmp / .dib</span>
+                <span class="ext-chip">.apng</span>
+                <span class="ext-chip">.jfif</span>
+              </div>
+            </div>
+
+            <div class="format-category-card">
+              <div class="cat-header">
+                <span class="cat-icon cat-raw">📷</span>
+                <h4 class="cat-title">Câmeras Profissionais (RAW)</h4>
+              </div>
+              <p class="cat-desc">DSLR e Mirrorless com extração instantânea do JPEG original da câmera (&lt;15ms).</p>
+              <div class="cat-ext-chips">
+                <span class="ext-chip">.dng (Adobe)</span>
+                <span class="ext-chip">.cr2 / .cr3 (Canon)</span>
+                <span class="ext-chip">.nef / .nrw (Nikon)</span>
+                <span class="ext-chip">.arw / .sr2 (Sony)</span>
+                <span class="ext-chip">.orf (Olympus)</span>
+                <span class="ext-chip">.raf (Fuji)</span>
+                <span class="ext-chip">.rw2 (Lumix)</span>
+                <span class="ext-chip">.pef (Pentax)</span>
+              </div>
+            </div>
+
+            <div class="format-category-card">
+              <div class="cat-header">
+                <span class="cat-icon cat-design">🎨</span>
+                <h4 class="cat-title">Design, 3D &amp; Texturas</h4>
+              </div>
+              <p class="cat-desc">Softwares de computação gráfica, edição e desenvolvimento de jogos.</p>
+              <div class="cat-ext-chips">
+                <span class="ext-chip">.psd / .psb (Photoshop)</span>
+                <span class="ext-chip">.tga / .tpic (Targa 3D)</span>
+                <span class="ext-chip">.dds (DirectDraw)</span>
+                <span class="ext-chip">.hdr (Radiance HDRI)</span>
+              </div>
+            </div>
+
+            <div class="format-category-card">
+              <div class="cat-header">
+                <span class="cat-icon cat-vector">📐</span>
+                <h4 class="cat-title">Vetoriais Escaláveis</h4>
+              </div>
+              <p class="cat-desc">Gráficos em vetores rasterizados com máxima nitidez no Canvas.</p>
+              <div class="cat-ext-chips">
+                <span class="ext-chip">.svg</span>
+                <span class="ext-chip">.svgz</span>
+              </div>
+            </div>
+
+            <div class="format-category-card">
+              <div class="cat-header">
+                <span class="cat-icon cat-mobile">📱</span>
+                <h4 class="cat-title">Apple &amp; Mobile Moderno</h4>
+              </div>
+              <p class="cat-desc">Fotos de alta eficiência de iPhones, iPads e smartphones modernos.</p>
+              <div class="cat-ext-chips">
+                <span class="ext-chip">.heic</span>
+                <span class="ext-chip">.heif</span>
+                <span class="ext-chip">.heics</span>
+                <span class="ext-chip">.heifs</span>
+              </div>
+            </div>
+
+            <div class="format-category-card">
+              <div class="cat-header">
+                <span class="cat-icon cat-print">🖨️</span>
+                <h4 class="cat-title">Impressão &amp; Scanners</h4>
+              </div>
+              <p class="cat-desc">Imagens industriais, pré-impressão e scanners de alta fidelidade.</p>
+              <div class="cat-ext-chips">
+                <span class="ext-chip">.tiff</span>
+                <span class="ext-chip">.tif</span>
+              </div>
+            </div>
+
+            <div class="format-category-card">
+              <div class="cat-header">
+                <span class="cat-icon cat-icon">🎯</span>
+                <h4 class="cat-title">Ícones de Sistema</h4>
+              </div>
+              <p class="cat-desc">Ícones e cursores com extração automática da maior resolução interna.</p>
+              <div class="cat-ext-chips">
+                <span class="ext-chip">.ico</span>
+                <span class="ext-chip">.cur</span>
+              </div>
+            </div>
+
+            <div class="format-category-card">
+              <div class="cat-header">
+                <span class="cat-icon cat-sci">🔬</span>
+                <h4 class="cat-title">Científicos &amp; Retrô</h4>
+              </div>
+              <p class="cat-desc">Formatos de visão computacional, sistemas Unix e legados clássicos.</p>
+              <div class="cat-ext-chips">
+                <span class="ext-chip">.ppm</span>
+                <span class="ext-chip">.pgm</span>
+                <span class="ext-chip">.pbm</span>
+                <span class="ext-chip">.pnm</span>
+                <span class="ext-chip">.pcx (Paintbrush)</span>
+                <span class="ext-chip">.wbmp</span>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="formats-modal-footer">
+            <div class="formats-dest-info">
+              <span>Destino da Conversão:</span>
+              <span class="dest-badge">JPG Web</span>
+              <span class="dest-badge">WEBP</span>
+              <span class="dest-badge">Ambos (JPG + WEBP)</span>
+            </div>
+            <button type="button" class="btn btn-primary" id="confirmFormatsModalBtn">Entendido</button>
           </div>
         </div>
       </div>
