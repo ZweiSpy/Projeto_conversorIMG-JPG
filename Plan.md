@@ -130,19 +130,48 @@ gantt
 - Botão de recompressão individual (`btn-single-reprocess`) em cada card para testes pontuais de fidelidade visual.
 - Ciclo de reprocessamento seguro a partir de `item.file` original em memória com revogação limpa de ObjectURLs anteriores para evitar vazamentos de RAM.
 
+### Fase 8: Suíte Completa de 14 Upgrades de Alto Impacto (Status: Concluída)
+1. **Multithreading com Web Workers (`worker_converter.js`):** Processamento assíncrono em pool de workers com `OffscreenCanvas`, liberando completamente a Main Thread de renderização.
+2. **Medidor Científico de Fidelidade Visual (SSIM & Nitidez):** Cálculo local do índice de similaridade estrutural (SSIM) e score percentual de fidelidade (99.8%+) sem depender de serviços externos.
+3. **Suporte Híbrido a Saída WebP:** Pílulas de seleção de formato (`JPG`, `WEBP`, `Ambos`) gerando downloads individuais ou pacote ZIP dual.
+4. **Modo "Tamanho Alvo Automático" (Target Size):** Algoritmo de busca binária por convergência iterativa de qualidade para caber em `< 100 KB`, `< 200 KB`, `< 500 KB` ou `< 1 MB`.
+5. **Recorte Inteligente e Aspect Ratios:** Presets de corte profissional (`1:1 Quadrado`, `16:9 Widescreen`, `4:3 Clássico`, `9:16 Stories/Reels`) com centralização automática.
+6. **Renomeador em Lote com Tags e Slugify:** Padrão configurável (`{name}`, `{ext}`, `{date}`, `{idx}`, `{w}x{h}`, `{q}`) com sanitização e normalização de URLs (slugify).
+7. **Modo "Antes e Depois" com Cortina Deslizante (Split-Screen Compare):** Modal de comparação pixel-perfect com slider de cortina CSS `clip-path`, zoom interativo de 1x a 3x e visualização lado a lado.
+8. **Preservação e Sanitização de Metadados EXIF:** Leitor binário de tags EXIF com correção automática de orientação de câmeras e chave seletora para remover ou manter dados.
+9. **Estatísticas Globais Acumuladas (Lifetime Savings):** Persistência em `localStorage` de total de imagens convertidas, megabytes economizados e redução média ao longo da vida útil.
+10. **Atalhos de Teclado Profissionais (Power-User Hotkeys):** Navegação rápida via teclado (`Ctrl+O` abrir, `Ctrl+S` salvar/baixar, `Space` converter, `Delete` limpar, `R` recomprimir, `?` atalhos, `Esc` fechar).
+11. **Arrastar e Soltar de Pastas Inteiras (Folder Drop):** Leitura recursiva de diretórios via `webkitGetAsEntry` / `FileSystemDirectoryReader` processando árvores de pastas completas com filtro de imagens estáticas.
+12. **Gerador de Código HTML Responsivo (`<picture>` & `srcset`):** Modal com geração de snippets prontos para produção web moderna com fallback JPG e WebP otimizado.
+13. **Integração com Menu de Contexto do Windows Explorer:** Registro no sistema (`HKCU\Software\Classes\*\shell\ZweiPixelCompact`) permitindo clique direito em qualquer imagem para abrir diretamente no app.
+14. **Notificações Nativas e Feedback Sonoro:** Disparo de notificações Toast do Windows (via PowerShell / Web Notifications) e síntese sonora de conclusão de lote.
+
+### Fase 9: Testes Automatizados E2E e Unitários (Status: Concluída - 100% PASS)
+- **Suite E2E Frontend (`tests/test_all_14_upgrades.js`):**
+  - Execução automatizada via protocolo CDP no Microsoft Edge em modo headless.
+  - Cobertura completa dos 14 cenários reais do dia a dia (workers, SSIM, WebP, busca binária de KB, renomeador, crop, EXIF, estatísticas, atalhos, split modal, folder drop, etc.).
+  - Resultado: **14/14 testes aprovados (100% PASS)**.
+- **Suite Backend Windows (`tests/test_desktop_backend.py`):**
+  - Testes unitários com `unittest` cobrindo adição/remoção de chaves no Registro do Windows, disparos de notificação PowerShell, decodificação Base64/salvamento em disco e ingestão de argumentos CLI.
+  - Resultado: **6/6 testes aprovados (100% PASS)**.
+- **Recompilação do Executável Nativo:**
+  - Binário standalone `dist/ZweiPixelCompact.exe` reempacotado com PyInstaller incorporando todos os 14 upgrades.
+
 ---
 
 ## 5. Critérios de Aceitação (Definition of Done - DoD)
 
-1. **Compatibilidade de Formatos:** Converte com sucesso imagens PNG, HEIC, BMP, WEBP e TIFF para JPG.
-2. **Rejeição Rígida:** Rejeita explicitamente vídeos, GIFs e formatos inválidos com mensagem informativa ao usuário.
-3. **Privacidade:** Nenhuma requisição HTTP de upload de arquivos de imagem é disparada; 100% da conversão ocorre localmente.
-4. **Resiliência de Memória:** O navegador não trava nem apresenta congelamento perceptível durante a conversão de lotes com até 20 imagens.
-5. **Usabilidade & Estética:** Interface com nota máxima de acabamento visual, responsiva em desktop e mobile, com identidade visual da Zwei Coorporações LTDA.
-6. **Suporte Desktop:** Disponibilização de executável `ZweiPixelCompact.exe` independente para Windows com recurso de salvamento direto em pastas locais.
-7. **Controle de Início & Recompressão:** Capacidade de desativar o início automático para calibrar qualidade antecipadamente e recomprimir imagens existentes em lote ou individualmente com atualização instantânea de métricas.
-8. **Entrega dos Arquivos:** Todos os arquivos de documentação (`Plan.md`, `Agents.md`, `readme.md`, `sdd.md`) sincronizados e em conformidade estrita.
+1. **Compatibilidade Ampla de Formatos:** Converte com sucesso imagens PNG, HEIC, BMP, WEBP e TIFF para JPG e WebP.
+2. **Rejeição Rígida de Não-Imagens:** Rejeita explicitamente vídeos, GIFs animados e arquivos forjados com notificação imediata.
+3. **Privacidade Absoluta:** 100% de processamento local no dispositivo (Zero Cloud, Zero Network).
+4. **Resiliência e Desempenho Multi-Thread:** Suporte a Web Workers com isolamento de threads e sem congelamento da UI.
+5. **Precisão de Compressão e Métricas:** Cálculo de SSIM em tempo real e modo de busca binária por tamanho alvo em KB.
+6. **Usabilidade & Estética Corporativa:** Interface moderna Dark Glassmorphism com identidade Zwei Coorporações LTDA, logo oficial e ícone de alta resolução.
+7. **Suporte Desktop e Sistema Operacional:** Executável `ZweiPixelCompact.exe` independente para Windows, suporte a menu de contexto do Explorer e notificações do SO.
+8. **Cobertura de Testes Automatizados:** 100% de aprovação em todos os testes unitários de backend e testes E2E automatizados.
+9. **Documentação e Repositório:** Sincronização estrita de `Plan.md`, `sdd.md`, `readme.md`, `walkthrough.md` e repositório Git limpo e versionado.
 
 ---
 
 *Desenvolvido por **Zwei** | © 2026 Zwei Coorporações LTDA. Todos os direitos reservados.*
+

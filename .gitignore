@@ -8,6 +8,7 @@ tmp_test_profile*/
 .tmp/
 tmp/
 temp/
+scratch/
 *.log
 
 # --- Sistema Operacional: Windows ---

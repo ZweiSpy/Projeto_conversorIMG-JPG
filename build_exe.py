@@ -19,6 +19,7 @@ def build():
         "--add-data=index.html;.",
         "--add-data=style.css;.",
         "--add-data=app.js;.",
+        "--add-data=worker_converter.js;.",
         "--add-data=vendor;vendor",
         "--add-data=Z-logo.png;.",
         "--add-data=z-icon.ico;.",
