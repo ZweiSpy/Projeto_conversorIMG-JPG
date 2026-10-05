@@ -40,6 +40,14 @@ class DesktopAPI:
     def is_desktop(self):
         return True
 
+    def get_system_info(self):
+        """Retorna informações de hardware da máquina (núcleos de CPU, arquitetura e plataforma)."""
+        return {
+            "cpu_count": os.cpu_count() or 4,
+            "platform": sys.platform,
+            "os_name": "Windows" if os.name == "nt" else sys.platform
+        }
+
     def select_folder(self):
         """Abre a janela nativa do Windows Explorer para o usuário escolher uma pasta de destino."""
         if not self._window:

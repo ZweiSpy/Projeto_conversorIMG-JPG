@@ -8,7 +8,20 @@
   'use strict';
 
   // --- 1. Constantes e Configurações Globais ---
-  const MAX_CONCURRENT_CONVERSIONS = 2;
+  function detectHardwareCores() {
+    let cores = 4;
+    if (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) {
+      cores = navigator.hardwareConcurrency;
+    }
+    return Math.max(1, cores);
+  }
+
+  function calculateOptimalThreads(cores) {
+    if (cores <= 2) return cores;
+    if (cores <= 4) return cores - 1; // 3 threads em 4 núcleos (1 para SO/UI)
+    if (cores <= 8) return cores - 1; // 7 threads em 8 núcleos
+    return Math.min(cores - 2, 16);   // 14 threads em 16 núcleos (reserva 2 para o Windows e teto seguro de 16 para RAM)
+  }
 
   const FORMATS_ALLOWED = [
     'image/png', 'image/heic', 'image/heif', 'image/bmp', 
@@ -33,6 +46,14 @@
     slugify: true,
     exifOrientation: true,
     nativeNotifications: true,
+
+    // Concorrência e Multi-Threading Dinâmico
+    threadsConfig: {
+      mode: localStorage.getItem('pixelcompact_threads_mode') || 'auto', // 'auto', 'turbo', 'eco', 'custom'
+      customCount: parseInt(localStorage.getItem('pixelcompact_threads_custom'), 10) || 4,
+      detectedCores: detectHardwareCores()
+    },
+    maxConcurrentThreads: 2, // calculado dinamicamente com base no hardware
 
     // Coleções e semáforos
     items: new Map(),         // id -> itemData
@@ -80,6 +101,19 @@
   const nativeNotifyToggle = document.getElementById('nativeNotifyToggle');
   const contextMenuContainer = document.getElementById('contextMenuContainer');
   const contextMenuToggle = document.getElementById('contextMenuToggle');
+
+  // Multi-Threading & Desempenho
+  const cpuHardwareBadge = document.getElementById('cpuHardwareBadge');
+  const cpuDetectedCount = document.getElementById('cpuDetectedCount');
+  const threadModeBtns = document.querySelectorAll('.thread-mode-btn');
+  const threadModeAutoDesc = document.getElementById('threadModeAutoDesc');
+  const threadModeTurboDesc = document.getElementById('threadModeTurboDesc');
+  const threadModeEcoDesc = document.getElementById('threadModeEcoDesc');
+  const customThreadSliderBox = document.getElementById('customThreadSliderBox');
+  const customThreadSlider = document.getElementById('customThreadSlider');
+  const customThreadValue = document.getElementById('customThreadValue');
+  const sliderMidTick = document.getElementById('sliderMidTick');
+  const sliderMaxTick = document.getElementById('sliderMaxTick');
 
   // Header & Ações
   const workerBadge = document.getElementById('workerBadge');
@@ -229,8 +263,24 @@
     showToast('Histórico vitalício zerado com sucesso.', 'info');
   }
 
-  // --- 6. Inicialização do Web Worker Pool (Multi-Threading) ---
-  function initWorkerPool() {
+  // --- 6. Inicialização e Gestão Dinâmica do Web Worker Pool (Multi-Threading) ---
+  function getActiveThreadLimit() {
+    const cores = state.threadsConfig.detectedCores;
+    if (state.threadsConfig.mode === 'turbo') {
+      return Math.max(1, cores);
+    }
+    if (state.threadsConfig.mode === 'eco') {
+      return Math.max(1, Math.floor(cores / 2));
+    }
+    if (state.threadsConfig.mode === 'custom') {
+      const custom = state.threadsConfig.customCount || calculateOptimalThreads(cores);
+      return Math.max(1, Math.min(cores, custom));
+    }
+    // 'auto' padrão seguro com folga para o SO
+    return calculateOptimalThreads(cores);
+  }
+
+  function initWorkerPool(targetCount = null) {
     if (!state.useWorkers) {
       if (workerBadge) {
         workerBadge.innerHTML = '<span class="status-indicator"></span> Canvas Engine';
@@ -239,17 +289,30 @@
       return;
     }
 
+    const desiredThreads = targetCount || getActiveThreadLimit();
+    state.maxConcurrentThreads = desiredThreads;
+
     try {
-      for (let i = 0; i < MAX_CONCURRENT_CONVERSIONS; i++) {
+      // Cria novos workers até atingir o limite desejado
+      while (state.workerPool.length < desiredThreads) {
         const worker = new Worker('worker_converter.js');
         worker.onmessage = handleWorkerMessage;
         worker.onerror = (err) => console.warn('Worker error:', err);
         state.workerPool.push(worker);
         state.availableWorkers.push(worker);
       }
-      if (workerBadge) {
-        workerBadge.innerHTML = '<span class="status-indicator"></span> ⚡ Multi-Thread (2 Workers)';
+
+      // Finaliza workers excedentes caso o limite tenha sido reduzido
+      while (state.workerPool.length > desiredThreads) {
+        const excessWorker = state.workerPool.pop();
+        const availIdx = state.availableWorkers.indexOf(excessWorker);
+        if (availIdx !== -1) {
+          state.availableWorkers.splice(availIdx, 1);
+        }
+        excessWorker.terminate();
       }
+
+      updateWorkerBadge();
     } catch (err) {
       console.warn('Falha ao instanciar Web Worker, usando Canvas 2D fallback:', err);
       state.useWorkers = false;
@@ -257,6 +320,81 @@
         workerBadge.innerHTML = '<span class="status-indicator"></span> Canvas Engine';
       }
     }
+  }
+
+  function updateWorkerBadge() {
+    if (!workerBadge) return;
+    const active = state.maxConcurrentThreads;
+    const total = state.threadsConfig.detectedCores;
+    const mode = state.threadsConfig.mode;
+
+    let modeText = 'Auto';
+    if (mode === 'turbo') modeText = 'Turbo';
+    else if (mode === 'eco') modeText = 'Eco';
+    else if (mode === 'custom') modeText = 'Manual';
+
+    workerBadge.innerHTML = `<span class="status-indicator"></span> ⚡ Multi-Thread (${active}/${total} Cores • ${modeText})`;
+    workerBadge.title = `${active} workers ativos em paralelo (${total} núcleos detectados no processador). Modo: ${modeText}.`;
+  }
+
+  function updateCpuUI() {
+    const cores = state.threadsConfig.detectedCores;
+    const mode = state.threadsConfig.mode;
+    const optimal = calculateOptimalThreads(cores);
+    const eco = Math.max(1, Math.floor(cores / 2));
+    const active = getActiveThreadLimit();
+
+    if (cpuDetectedCount) {
+      cpuDetectedCount.textContent = `CPU: ${cores} Threads (${active} ativas)`;
+    }
+
+    if (threadModeAutoDesc) {
+      const freeCores = cores - optimal;
+      threadModeAutoDesc.textContent = `Aloca ${optimal} threads (${freeCores > 0 ? freeCores + ' livre' + (freeCores > 1 ? 's' : '') + ' para o Windows' : '100%'} fluido)`;
+    }
+
+    if (threadModeTurboDesc) {
+      threadModeTurboDesc.textContent = `Utiliza 100% (${cores} threads) para conversão ultra-rápida`;
+    }
+
+    if (threadModeEcoDesc) {
+      threadModeEcoDesc.textContent = `Usa 50% (${eco} threads), ideal para poupar bateria e notebook frio`;
+    }
+
+    if (customThreadSlider) {
+      customThreadSlider.max = cores;
+      if (!state.threadsConfig.customCount) {
+        state.threadsConfig.customCount = optimal;
+      }
+      customThreadSlider.value = state.threadsConfig.customCount;
+      if (customThreadValue) {
+        customThreadValue.textContent = `${state.threadsConfig.customCount} Thread${state.threadsConfig.customCount > 1 ? 's' : ''}`;
+      }
+      if (sliderMidTick) sliderMidTick.textContent = `${Math.round(cores / 2)} (Metade)`;
+      if (sliderMaxTick) sliderMaxTick.textContent = `${cores} (Máx)`;
+    }
+
+    // Atualiza botões ativos
+    if (threadModeBtns) {
+      threadModeBtns.forEach(btn => {
+        const btnMode = btn.getAttribute('data-mode');
+        if (btnMode === mode) {
+          btn.classList.add('active');
+        } else {
+          btn.classList.remove('active');
+        }
+      });
+    }
+
+    if (customThreadSliderBox) {
+      if (mode === 'custom') {
+        customThreadSliderBox.classList.remove('hidden');
+      } else {
+        customThreadSliderBox.classList.add('hidden');
+      }
+    }
+
+    updateWorkerBadge();
   }
 
   function handleWorkerMessage(e) {
@@ -466,6 +604,34 @@
       state.backgroundColor = e.target.value;
       onSettingsChanged();
     });
+
+    // Multi-Threading & Desempenho de CPU
+    updateCpuUI();
+
+    if (threadModeBtns) {
+      threadModeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          const newMode = btn.getAttribute('data-mode');
+          state.threadsConfig.mode = newMode;
+          localStorage.setItem('pixelcompact_threads_mode', newMode);
+          updateCpuUI();
+          initWorkerPool();
+          showToast(`Desempenho: Modo ${newMode.toUpperCase()} ativado (${state.maxConcurrentThreads} workers)`, 'info');
+        });
+      });
+    }
+
+    if (customThreadSlider) {
+      customThreadSlider.addEventListener('input', (e) => {
+        const val = parseInt(e.target.value, 10);
+        state.threadsConfig.customCount = val;
+        localStorage.setItem('pixelcompact_threads_custom', val.toString());
+        if (customThreadValue) {
+          customThreadValue.textContent = `${val} Thread${val > 1 ? 's' : ''}`;
+        }
+        initWorkerPool();
+      });
+    }
 
     // Renomeação & Slugify
     if (namePatternInput) {
@@ -928,7 +1094,7 @@
   }
 
   function processQueue() {
-    while (state.activeWorkers < MAX_CONCURRENT_CONVERSIONS && state.queue.length > 0) {
+    while (state.activeWorkers < state.maxConcurrentThreads && state.queue.length > 0) {
       const nextId = state.queue.shift();
       const item = state.items.get(nextId);
       if (item && item.status === 'pending') {
@@ -1766,7 +1932,11 @@
     startManualQueue,
     openLifetimeModal,
     handleFiles,
-    formatFilename
+    formatFilename,
+    initWorkerPool,
+    updateCpuUI,
+    getActiveThreadLimit,
+    calculateOptimalThreads
   };
 
   // --- 19. Inicialização do Ciclo de Vida do Aplicativo ---
@@ -1782,6 +1952,18 @@
       if (contextMenuContainer) contextMenuContainer.classList.remove('hidden');
 
       if (window.pywebview && window.pywebview.api) {
+        // Detecta núcleos de CPU diretamente do SO no ambiente Desktop
+        if (window.pywebview.api.get_system_info) {
+          try {
+            const sysInfo = await window.pywebview.api.get_system_info();
+            if (sysInfo && sysInfo.cpu_count) {
+              state.threadsConfig.detectedCores = sysInfo.cpu_count;
+              updateCpuUI();
+              initWorkerPool();
+            }
+          } catch (e) {}
+        }
+
         // Verifica se menu de contexto está ativo no registro do Windows
         if (window.pywebview.api.is_context_menu_enabled) {
           try {

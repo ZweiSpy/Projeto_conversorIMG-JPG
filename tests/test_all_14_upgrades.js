@@ -228,24 +228,69 @@ async function run() {
   }
 
   // =========================================================================
-  // TESTE 3: Conversão Paralela Multi-Thread (Web Worker com OffscreenCanvas)
+  // TESTE 3: Conversão Paralela Multi-Thread Dinâmica (CPU Adaptativa & Modos)
   // =========================================================================
   try {
     const t3 = await evaluate(`
       (() => {
         const s = window.PixelCompact.state;
-        const badge = document.getElementById('workerBadge');
+        const initialThreads = s.maxConcurrentThreads;
+        const cores = s.threadsConfig.detectedCores;
+        const initialPool = s.workerPool.length;
+        const initialBadge = document.getElementById('workerBadge').textContent;
+        const cpuBadge = document.getElementById('cpuHardwareBadge').textContent;
+
+        // 1. Testa Modo Turbo (100% dos núcleos)
+        document.getElementById('threadModeTurboBtn').click();
+        const turboThreads = s.maxConcurrentThreads;
+        const turboPool = s.workerPool.length;
+
+        // 2. Testa Modo Econômico (50% dos núcleos)
+        document.getElementById('threadModeEcoBtn').click();
+        const ecoThreads = s.maxConcurrentThreads;
+        const ecoPool = s.workerPool.length;
+
+        // 3. Testa Modo Manual / Custom (1 thread)
+        document.getElementById('threadModeCustomBtn').click();
+        const slider = document.getElementById('customThreadSlider');
+        slider.value = 1;
+        slider.dispatchEvent(new Event('input'));
+        const customThreads = s.maxConcurrentThreads;
+        const customPool = s.workerPool.length;
+
+        // 4. Retorna para o Modo Automático Seguro
+        document.getElementById('threadModeAutoBtn').click();
+        const finalThreads = s.maxConcurrentThreads;
+        const finalPool = s.workerPool.length;
+
         return {
-          useWorkers: s.useWorkers,
-          poolSize: s.workerPool.length,
-          badgeText: badge ? badge.textContent : ''
+          cores,
+          initialThreads,
+          initialPool,
+          initialBadge: initialBadge.trim(),
+          cpuBadge: cpuBadge.trim(),
+          turboThreads,
+          turboPool,
+          ecoThreads,
+          ecoPool,
+          customThreads,
+          customPool,
+          finalThreads,
+          finalPool
         };
       })()
     `);
 
-    recordPass(3, 'Conversão Paralela Multi-Thread (Web Worker)', `status: ${t3.badgeText.trim()}`);
+    if (t3.turboThreads === t3.cores && t3.turboPool === t3.cores &&
+        t3.ecoThreads === Math.max(1, Math.floor(t3.cores / 2)) &&
+        t3.customThreads === 1 && t3.customPool === 1 &&
+        t3.finalThreads === t3.initialThreads) {
+      recordPass(3, 'Conversão Paralela Multi-Thread Dinâmica', `${t3.initialBadge} | Turbo=${t3.turboThreads} Eco=${t3.ecoThreads} Manual=${t3.customThreads}`);
+    } else {
+      throw new Error(`Falha na alternância de modos de threads: ${JSON.stringify(t3)}`);
+    }
   } catch (err) {
-    recordFail(3, 'Conversão Paralela Multi-Thread (Web Worker)', err);
+    recordFail(3, 'Conversão Paralela Multi-Thread Dinâmica', err);
   }
 
   // =========================================================================

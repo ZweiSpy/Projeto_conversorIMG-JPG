@@ -131,7 +131,7 @@ gantt
 - Ciclo de reprocessamento seguro a partir de `item.file` original em memória com revogação limpa de ObjectURLs anteriores para evitar vazamentos de RAM.
 
 ### Fase 8: Suíte Completa de 14 Upgrades de Alto Impacto (Status: Concluída)
-1. **Multithreading com Web Workers (`worker_converter.js`):** Processamento assíncrono em pool de workers com `OffscreenCanvas`, liberando completamente a Main Thread de renderização.
+1. **Multithreading Dinâmico e Adaptativo com Web Workers (`worker_converter.js` e `app.js`):** Detecção automática de núcleos da CPU (`navigator.hardwareConcurrency` e `os.cpu_count()`) com fórmula de *Safe Headroom* para preservar a fluidez do SO (reserva 1 a 2 threads para UI/Windows), modos de desempenho (Automático, Turbo 100%, Econômico 50% e Manual) e redimensionamento dinâmico do pool em tempo real, preparando a base arquitetural para futura conversão de vídeos.
 2. **Medidor Científico de Fidelidade Visual (SSIM & Nitidez):** Cálculo local do índice de similaridade estrutural (SSIM) e score percentual de fidelidade (99.8%+) sem depender de serviços externos.
 3. **Suporte Híbrido a Saída WebP:** Pílulas de seleção de formato (`JPG`, `WEBP`, `Ambos`) gerando downloads individuais ou pacote ZIP dual.
 4. **Modo "Tamanho Alvo Automático" (Target Size):** Algoritmo de busca binária por convergência iterativa de qualidade para caber em `< 100 KB`, `< 200 KB`, `< 500 KB` ou `< 1 MB`.
@@ -149,13 +149,13 @@ gantt
 ### Fase 9: Testes Automatizados E2E e Unitários (Status: Concluída - 100% PASS)
 - **Suite E2E Frontend (`tests/test_all_14_upgrades.js`):**
   - Execução automatizada via protocolo CDP no Microsoft Edge em modo headless.
-  - Cobertura completa dos 14 cenários reais do dia a dia (workers, SSIM, WebP, busca binária de KB, renomeador, crop, EXIF, estatísticas, atalhos, split modal, folder drop, etc.).
+  - Cobertura completa dos 14 cenários reais do dia a dia (pool adaptativo de workers, SSIM, WebP, busca binária de KB, renomeador, crop, EXIF, estatísticas, atalhos, split modal, folder drop, etc.).
   - Resultado: **14/14 testes aprovados (100% PASS)**.
 - **Suite Backend Windows (`tests/test_desktop_backend.py`):**
-  - Testes unitários com `unittest` cobrindo adição/remoção de chaves no Registro do Windows, disparos de notificação PowerShell, decodificação Base64/salvamento em disco e ingestão de argumentos CLI.
-  - Resultado: **6/6 testes aprovados (100% PASS)**.
+  - Testes unitários com `unittest` cobrindo adição/remoção de chaves no Registro do Windows, especificações de hardware (CPU count e plataforma), disparos de notificação PowerShell, decodificação Base64/salvamento em disco e ingestão de argumentos CLI.
+  - Resultado: **7/7 testes aprovados (100% PASS)**.
 - **Recompilação do Executável Nativo:**
-  - Binário standalone `dist/ZweiPixelCompact.exe` reempacotado com PyInstaller incorporando todos os 14 upgrades.
+  - Binário standalone `dist/ZweiPixelCompact.exe` reempacotado com PyInstaller incorporando todos os upgrades e motor adaptativo de threads.
 
 ---
 

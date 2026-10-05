@@ -39,9 +39,11 @@ Diferente de conversores online convencionais que exigem o upload de seus arquiv
 2. **Medidor Científico de Fidelidade Visual (SSIM & PSNR):**
    - Cálculo automatizado de *Structural Similarity Index Measure* (SSIM) em cada imagem.
    - Badge visual de fidelidade no card da imagem e no modal comparativo (ex: `SSIM: 99.9%`).
-3. **Conversão Paralela Multi-Thread (Web Worker com OffscreenCanvas):**
-   - Pool de Web Workers desacoplados executando renderização em background via `OffscreenCanvas`.
-   - Interface mantém 60 FPS ininterruptos mesmo processando dezenas de fotos simultaneamente.
+3. **Conversão Paralela Multi-Thread Dinâmica (Web Workers com OffscreenCanvas & Safe Headroom):**
+   - Detecção em tempo real dos núcleos de CPU (`navigator.hardwareConcurrency` e `os.cpu_count()`).
+   - Algoritmo de *Safe Headroom* que aloca a quantidade máxima segura de threads reservando núcleos para garantir fluidez no Windows e na interface (60 FPS).
+   - Seletor de desempenho no painel avançado com presets: **Automático Seguro** (recomendado), **Modo Turbo** (100% dos núcleos), **Modo Econômico** (50% dos núcleos para poupar bateria) e **Manual** (1 a N threads).
+   - Base arquitetural desacoplada e preparada para processamento massivo e futura transcodificação de vídeos.
 4. **Target Size Automático ("Caber em < N KB"):**
    - Algoritmo de busca binária convergente que calibra a qualidade para atingir um peso máximo determinado (`< 100 KB`, `< 200 KB`, `< 500 KB`, `< 1 MB`).
 5. **Renomeador em Lote com Padrão Customizável & Slugify:**
@@ -195,10 +197,10 @@ node tests/test_all_14_upgrades.js
 .venv\Scripts\python.exe -m unittest tests/test_desktop_backend.py
 ```
 
-### Resultados da Suíte:
+### Resultados da Suíte (100% PASS):
 - `✔ Teste 1: Split-Screen Interativo Antes vs Depois (cortina 35%, zoom 2x e grid view validados)`
 - `✔ Teste 2: Medidor Científico de Fidelidade Visual (SSIM) (score 99.9%, badge presente)`
-- `✔ Teste 3: Conversão Paralela Multi-Thread (Web Worker) (status: ⚡ Multi-Thread (2 Workers))`
+- `✔ Teste 3: Conversão Paralela Multi-Thread Dinâmica (⚡ Multi-Thread Dinâmica com Safe Headroom | Modos Auto, Turbo, Eco e Manual)`
 - `✔ Teste 4: Target Size Automático ("Caber em < N KB") (arquivo gerado com 18 KB (alvo < 100 KB))`
 - `✔ Teste 5: Renomeador em Lote com Padrão e Slugify (gerado: foto-de-ferias-em-sao-paulo_compact_1920x1080.jpg)`
 - `✔ Teste 6: Recorte Inteligente com Aspect Ratios (1:1) (dimensão resultante: 400x400px)`
@@ -210,6 +212,7 @@ node tests/test_all_14_upgrades.js
 - `✔ Teste 12: Suporte a Saída WebP (JPG / WebP / Ambos) (Blob WEBP e modo duplo validados)`
 - `✔ Teste 13: Gerador de Tags HTML <picture> & srcset (código de alta performance validado)`
 - `✔ Teste 14: Arrastar e Soltar de Pastas Inteiras (Folder Drop) (varredura recursiva de diretórios validada)`
+- `✔ Backend Windows (unittest): 7/7 Testes PASS (incluindo get_system_info e CPU hardware detection)`
 
 ---
 

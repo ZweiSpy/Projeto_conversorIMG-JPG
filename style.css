@@ -1445,6 +1445,172 @@ input[type="range"]::-webkit-slider-thumb:hover {
   animation: fadeIn 0.25s ease;
 }
 
+/* Multi-Threading & Desempenho da CPU */
+.performance-row {
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(0, 240, 255, 0.15);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.performance-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.perf-title-box {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.perf-title-box svg {
+  color: #00f0ff;
+  filter: drop-shadow(0 0 6px rgba(0, 240, 255, 0.4));
+}
+
+.cpu-hardware-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 4px 12px;
+  background: rgba(0, 240, 255, 0.08);
+  border: 1px solid rgba(0, 240, 255, 0.25);
+  border-radius: var(--radius-full);
+  font-size: 0.76rem;
+  color: #a5f3fc;
+  font-family: var(--font-mono);
+}
+
+.cpu-hardware-badge .status-indicator {
+  background: #00f0ff;
+  box-shadow: 0 0 8px #00f0ff;
+}
+
+.thread-modes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.thread-mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+  padding: 10px 12px;
+  background: rgba(30, 41, 59, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.thread-mode-btn:hover {
+  background: rgba(45, 60, 85, 0.6);
+  border-color: rgba(99, 102, 241, 0.4);
+  transform: translateY(-1px);
+}
+
+.thread-mode-btn.active {
+  background: rgba(99, 102, 241, 0.18);
+  border-color: #6366f1;
+  box-shadow: 0 0 14px rgba(99, 102, 241, 0.35);
+}
+
+.mode-btn-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  font-size: 0.84rem;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.mode-icon {
+  font-size: 0.95rem;
+}
+
+.mode-pill-rec {
+  margin-left: auto;
+  font-size: 0.62rem;
+  padding: 2px 6px;
+  background: rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.4);
+  color: #6ee7b7;
+  border-radius: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.mode-pill-turbo {
+  margin-left: auto;
+  font-size: 0.62rem;
+  padding: 2px 6px;
+  background: rgba(245, 158, 11, 0.2);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  color: #fcd34d;
+  border-radius: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.mode-desc {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  line-height: 1.35;
+}
+
+.custom-thread-slider-box {
+  margin-top: 10px;
+  padding: 12px 14px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(0, 240, 255, 0.2);
+  border-radius: var(--radius-sm);
+  animation: fadeIn 0.2s ease;
+}
+
+.thread-slider-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.slider-caption {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.slider-val-badge {
+  font-size: 0.82rem;
+  color: #00f0ff;
+  background: rgba(0, 240, 255, 0.12);
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(0, 240, 255, 0.3);
+  font-family: var(--font-mono);
+}
+
+.thread-slider-ticks {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
 /* Renomeador em Lote */
 .pattern-input-box {
   display: flex;

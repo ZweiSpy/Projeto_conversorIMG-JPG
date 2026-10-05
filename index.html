@@ -234,6 +234,87 @@
           </summary>
           <div class="advanced-content">
             
+            <!-- Seção de Multi-Threading e Desempenho de CPU -->
+            <div class="advanced-row performance-row">
+              <div class="advanced-group">
+                <div class="performance-header">
+                  <div class="perf-title-box">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+                      <rect x="9" y="9" width="6" height="6"></rect>
+                      <line x1="9" y1="1" x2="9" y2="4"></line>
+                      <line x1="15" y1="1" x2="15" y2="4"></line>
+                      <line x1="9" y1="20" x2="9" y2="23"></line>
+                      <line x1="15" y1="20" x2="15" y2="23"></line>
+                      <line x1="20" y1="9" x2="23" y2="9"></line>
+                      <line x1="20" y1="14" x2="23" y2="14"></line>
+                      <line x1="1" y1="9" x2="4" y2="9"></line>
+                      <line x1="1" y1="14" x2="4" y2="14"></line>
+                    </svg>
+                    <label class="setting-label" style="margin-bottom: 0;">Multi-Threading & Desempenho da CPU</label>
+                  </div>
+                  <span class="cpu-hardware-badge" id="cpuHardwareBadge" title="Capacidade do processador detectada">
+                    <span class="status-indicator"></span>
+                    <strong id="cpuDetectedCount">Detectando...</strong>
+                  </span>
+                </div>
+
+                <div class="thread-modes-grid">
+                  <button type="button" class="thread-mode-btn active" data-mode="auto" id="threadModeAutoBtn" title="Deixa 1 ou 2 threads livres para garantir que o Windows e a interface fiquem 100% fluidos">
+                    <div class="mode-btn-header">
+                      <span class="mode-icon">⚡</span>
+                      <strong>Automático Seguro</strong>
+                      <span class="mode-pill-rec">Recomendado</span>
+                    </div>
+                    <span class="mode-desc" id="threadModeAutoDesc">Alocando threads com folga para o SO</span>
+                  </button>
+
+                  <button type="button" class="thread-mode-btn" data-mode="turbo" id="threadModeTurboBtn" title="Usa 100% dos núcleos de CPU para renderização ultra-rápida">
+                    <div class="mode-btn-header">
+                      <span class="mode-icon">🚀</span>
+                      <strong>Modo Turbo</strong>
+                      <span class="mode-pill-turbo">100% CPU</span>
+                    </div>
+                    <span class="mode-desc" id="threadModeTurboDesc">Utiliza todos os núcleos para velocidade máxima</span>
+                  </button>
+
+                  <button type="button" class="thread-mode-btn" data-mode="eco" id="threadModeEcoBtn" title="Usa 50% dos núcleos para poupar bateria e manter o notebook frio">
+                    <div class="mode-btn-header">
+                      <span class="mode-icon">🌱</span>
+                      <strong>Modo Econômico</strong>
+                    </div>
+                    <span class="mode-desc" id="threadModeEcoDesc">50% dos núcleos, ideal para notebooks na bateria</span>
+                  </button>
+
+                  <button type="button" class="thread-mode-btn" data-mode="custom" id="threadModeCustomBtn" title="Permite definir manualmente o número exato de workers">
+                    <div class="mode-btn-header">
+                      <span class="mode-icon">⚙️</span>
+                      <strong>Manual</strong>
+                    </div>
+                    <span class="mode-desc">Definir quantidade exata de workers</span>
+                  </button>
+                </div>
+
+                <!-- Slider para Modo Manual -->
+                <div class="custom-thread-slider-box hidden" id="customThreadSliderBox">
+                  <div class="thread-slider-header">
+                    <span class="slider-caption">Threads Ativas Simultâneas:</span>
+                    <strong class="slider-val-badge" id="customThreadValue">4 Threads</strong>
+                  </div>
+                  <input type="range" id="customThreadSlider" class="custom-range" min="1" max="16" value="4" step="1">
+                  <div class="thread-slider-ticks">
+                    <span>1 Thread</span>
+                    <span id="sliderMidTick">Metade</span>
+                    <span id="sliderMaxTick">Máx</span>
+                  </div>
+                </div>
+
+                <p class="setting-subtext" id="threadHelpText">
+                  💡 <em>Aloca dinamicamente Web Workers com OffscreenCanvas em paralelo. Em computadores modernos com múltiplos núcleos, converte até 10x mais rápido mantendo o Windows e o navegador 100% ágeis.</em>
+                </p>
+              </div>
+            </div>
+
             <!-- Renomeador de Arquivos com Template -->
             <div class="advanced-row">
               <div class="advanced-group">

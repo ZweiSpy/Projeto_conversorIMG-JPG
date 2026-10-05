@@ -97,6 +97,14 @@ class TestDesktopBackend(unittest.TestCase):
         finally:
             sys.argv = orig_argv
 
+    def test_07_get_system_info(self):
+        """Testa retorno das especificações de hardware (CPU count e plataforma)"""
+        info = self.api.get_system_info()
+        self.assertIsInstance(info, dict)
+        self.assertIn("cpu_count", info)
+        self.assertGreaterEqual(info["cpu_count"], 1)
+        self.assertIn("platform", info)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -242,32 +242,56 @@ Quando imagens já convertidas estão presentes no estado e o usuário altera qu
 
 ---
 
-## 11. Arquitetura de Concorrência Multi-Thread com Web Workers
+## 11. Arquitetura de Concorrência Multi-Thread Dinâmica com Safe Headroom
 
-Para garantir 60 FPS ininterruptos durante conversões intensivas de lotes pesados, a renderização e codificação gráfica foram desacopladas da Main Thread do navegador:
+Para garantir máxima velocidade de processamento em computadores modernos com múltiplos núcleos (de 4 a 32 threads) sem causar qualquer lentidão no Windows, mouse, áudio ou interface do usuário (mantendo 60 FPS ininterruptos), o Zwei PixelCompact implementa um **Motor Adaptativo de Threads com Safe Headroom**:
 
 ```mermaid
 flowchart TD
-    subgraph Main_Thread [Navegador - Main UI Thread]
-        UI[DOM & Eventos do Usuário] -->|Arquivo & Configurações| WP[Worker Pool Manager - 2 Instâncias]
-        WP -->|Despacha Conversão| W1[Web Worker #1]
-        WP -->|Despacha Conversão| W2[Web Worker #2]
-        W1 -->|Progresso & Blob Resultante| WP
-        W2 -->|Progresso & Blob Resultante| WP
-        WP -->|Renderiza Cards & Badges| UI
+    subgraph Detection_Layer [Detecção de Hardware]
+        NAV[navigator.hardwareConcurrency / os.cpu_count] --> FORMULA{Fórmula de Safe Headroom}
     end
 
-    subgraph Worker_Thread [Thread Secundária - worker_converter.js]
-        W1 -->|ImageBitmap / ArrayBuffer| OC[OffscreenCanvas 2D Context]
-        OC -->|Recorte & Proporção Aspect Ratio| BLIT[Normalização & Fundo Branco]
-        BLIT -->|Algoritmo SSIM 128x128| SSIM[Cálculo de Similaridade Estrutural]
-        BLIT -->|canvas.convertToBlob| BLOB[Blob JPG / WebP]
-        BLOB -->|postMessage com Transferable Objects| W1
+    subgraph Allocation_Layer [Alocação e Modos de Desempenho]
+        FORMULA -->|Modo Auto: Safe Headroom| AUTO[Reserva 1-2 threads para SO e UI]
+        FORMULA -->|Modo Turbo: 100% CPU| TURBO[Aloca N threads totais]
+        FORMULA -->|Modo Eco: 50% CPU| ECO[Aloca N/2 threads para bateria]
+        FORMULA -->|Modo Manual| CUSTOM[1 a N threads customizadas]
+    end
+
+    subgraph Execution_Layer [Worker Pool Dinâmico - OffscreenCanvas]
+        AUTO --> WP[Dynamic Web Worker Pool]
+        TURBO --> WP
+        ECO --> WP
+        CUSTOM --> WP
+        WP --> W1[Web Worker #1]
+        WP --> W2[Web Worker #2]
+        WP --> WN[Web Worker #N...]
     end
 ```
 
-### 11.1. Fallback Gracioso
-Em ambientes onde `OffscreenCanvas` ou `Worker` sofrem restrições de sandbox, o sistema possui detecção automática `workerSupport = ('Worker' in window && 'OffscreenCanvas' in window)` e chaveia transparentemente para a thread principal sem impactar a funcionalidade.
+### 11.1. Formulação Matemática do Safe Headroom
+O número ótimo de threads ativas no modo automático seguro é calculado por:
+
+$$\text{ThreadsRecomendadas}(N) = 
+\begin{cases} 
+1, & \text{se } N \le 1 \\
+N, & \text{se } N = 2 \\
+N - 1, & \text{se } 3 \le N \le 4 \\
+N - 1, & \text{se } 5 \le N \le 8 \\
+\min(N - 2, 16), & \text{se } N > 8 
+\end{cases}$$
+
+Onde $N$ representa o número de núcleos lógicos disponíveis na CPU. A reserva garante que o subsistema gráfico do Windows Desktop Window Manager (DWM) e a thread de eventos do usuário permaneçam com prioridade de agendamento em tempo real.
+
+### 11.2. Redimensionamento Dinâmico em Tempo Real
+Se o usuário alterar o modo de desempenho (ex: de Automático para Turbo ou Econômico) durante a execução, o `initWorkerPool()` redimensiona a quantidade de workers ativos sob demanda, instanciando novas threads ou terminando graciosamente workers excedentes sem necessidade de recarregar a aplicação.
+
+### 11.3. Preparação Arquitetural para Transcodificação de Vídeos (Futuro)
+A arquitetura do pool de workers desacopla a mensageria (`postMessage`) de operações puramente bidimensionais de imagem, permitindo que a futura expansão para conversão de vídeos (WebCodecs / FFmpeg Wasm) particione fluxos de vídeo em quadros ou chunks de áudio/vídeo em paralelo através do mesmo scheduler concorrente.
+
+### 11.4. Fallback Gracioso
+Em ambientes restritivos onde `OffscreenCanvas` ou `Worker` sofrem restrições de sandbox, o sistema possui detecção automática e chaveia transparentemente para a thread principal sem impactar a funcionalidade.
 
 ---
 
@@ -372,6 +396,7 @@ O projeto possui uma suíte dupla de testes automatizados garantindo 100% de con
    - Teste de chamadas de notificação do sistema operacional.
    - Teste de decodificação Base64 e gravação de arquivos em pastas locais.
    - Teste de parser de argumentos de linha de comando (`sys.argv`).
+   - Teste de obtenção de especificações de hardware de CPU e plataforma (`get_system_info`).
 
 ---
 
