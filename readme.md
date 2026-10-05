@@ -30,13 +30,21 @@ Diferente de conversores online convencionais que exigem o upload de seus arquiv
 ## ✨ Principais Funcionalidades
 
 - **Privacidade Absoluta (Zero Server):** Processamento local utilizando as APIs de memória e renderização gráfica do navegador.
+- **Controle Total de Início (Modo Manual vs. Auto):**
+  - Chave seletora **Auto Iniciar** permite desativar a conversão imediata para carregar fotos primeiro e calibrar a qualidade com calma antes do início.
+  - Botão destacado **▶ Iniciar Conversão** para disparar o lote quando estiver pronto.
+- **Recompressão em Tempo Real (Live Quality Testing):**
+  - Botão dinâmico **Atualizar Compressão** (com efeito de pulso neon) para recalcular e recomprimir todas as fotos já carregadas ao ajustar o slider de qualidade ou resolução.
+  - Botão de **Recompressão Individual** (`↻`) em cada card para testar a fidelidade de uma imagem específica sem reprocessar todo o lote.
+  - Zero perda acumulativa (*zero generational loss*): toda recompressão utiliza o arquivo nativo original preservado na memória.
 - **Suporte aos Principais Formatos:** Converte arquivos **PNG**, **HEIC/HEIF** (Apple), **BMP**, **WEBP**, **TIFF** e reprocessa **JPEGs** existentes.
 - **Otimização Especializada para Web:**
   - Compressão JPEG com subamostragem cromática inteligente.
   - Eliminação de metadados desnecessários (dados EXIF, GPS e miniaturas embutidas que aumentam o peso do arquivo).
-  - Remoção automática de canal alfa (transparência de PNGs mesclada perfeitamente sobre fundo branco limpo).
+  - Remoção automática de canal alfa (transparência de PNGs mesclada perfeitamente sobre fundo branco limpo ou configurável).
 - **Processamento em Lote (Batch):** Arraste e solte dezenas de arquivos de uma única vez com fila inteligente que evita travamento de memória.
 - **Feedback Visual com Métricas Reais:** Visualize instantaneamente o tamanho original, o novo tamanho e a porcentagem exata de economia (ex: `3.2 MB → 480 KB (-85%)`).
+- **Modal de Comparação Visual:** Compare lado a lado a imagem original e o resultado otimizado com dados de resolução e bytes.
 - **Exportação Ágil:**
   - Download individual de cada arquivo convertido com um clique.
   - Gravação direta em pastas locais no aplicativo Desktop.

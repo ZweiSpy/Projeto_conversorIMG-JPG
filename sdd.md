@@ -208,4 +208,38 @@ flowchart LR
 
 ---
 
+## 10. Arquitetura de Recompressão e Controle de Início
+
+```mermaid
+stateDiagram-v2
+    [*] --> Carregado : Arquivo Adicionado
+    Carregado --> Idle : Auto Iniciar = OFF
+    Carregado --> Pending : Auto Iniciar = ON
+    Idle --> Pending : Clique em 'Iniciar Conversão' ou '▶' no Card
+    Pending --> Converting : Semáforo Concorrente (Max 2)
+    Converting --> Completed : Codificação JPEG Concluída
+    Converting --> Error : Exceção na Decodificação
+    Completed --> Pending : Alteração de Configurações + 'Atualizar Compressão'
+    Completed --> Pending : Clique em '↻' no Card Individual
+    Error --> Pending : Clique em '↻' (Retry)
+    Completed --> [*] : Download ZIP / Salvar no PC
+```
+
+### 10.1. Princípio da Imutabilidade do Arquivo Fonte
+Para viabilizar múltiplos testes de compressão (ex: 82% ➔ 70% ➔ 95%) sem degradação cumulativa de qualidade (*generational loss*), o sistema retém o objeto nativo `item.file` intacto no `state.items (Map)`. Toda recompressão lê diretamente do arquivo fonte original, garantindo que o algoritmo codifique a imagem a partir dos pixels não recomprimidos.
+
+### 10.2. Gestão Estrita de Memória (Zero Leaks)
+Antes de instanciar novos Blobs e ObjectURLs durante a recompressão:
+1. `URL.revokeObjectURL(item.outputUrl)` é invocado imediatamente, liberando o ponteiro de memória no navegador.
+2. `item.outputBlob` anterior é desalocado para coleta de lixo pelo garbage collector da V8.
+3. As dimensões e percentuais de economia são recalculados dinamicamente em tela.
+
+### 10.3. Feedback Reativo e Animação Neon
+Quando imagens já convertidas estão presentes no estado e o usuário altera qualquer parâmetro (slider de qualidade, presets, resolução máxima ou cor de fundo):
+- A flag `state.settingsDirty` é comutada para `true`.
+- Os botões `#reprocessHeaderBtn` ("Atualizar") e `#reprocessBatchBtn` ("Recomprimir Todas") recebem a classe CSS `.pulse`, ativando a animação `neon-pulse` em verde/ciano.
+- Ao acionar a recompressão, `state.settingsDirty` retorna a `false` e os botões voltam ao estado de prontidão estável.
+
+---
+
 *Desenvolvido por **Zwei** | © 2026 Zwei Coorporações LTDA. Todos os direitos reservados.*

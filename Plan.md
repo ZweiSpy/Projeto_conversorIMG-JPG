@@ -116,12 +116,19 @@ gantt
 - Teste de rejeição de arquivos não autorizados (vídeos `.mp4`, GIFs animados `.gif`, executáveis renomeados).
 - Revisão e homologação final pelo Tech Lead & PO.
 
-### Fase 6: Expansão Desktop & Executável Autônomo (.exe)
+### Fase 6: Expansão Desktop & Executável Autônomo (.exe) (Status: Concluída)
 - Implementação do backend desktop via `pywebview` e Microsoft WebView2 (`desktop_app.py`).
 - Integração bidirecional com a API do Windows Explorer (`select_folder()` e gravação direta no disco rígido sem passar por ZIP).
 - Detecção dinâmica no frontend para exibir botão "Salvar na Pasta do PC".
 - Geração e integração do ícone oficial `z-icon.ico` e logo `Z-logo.png`.
 - Compilação do executável autônomo `dist/ZweiPixelCompact.exe` via PyInstaller com flag `--noconsole` e suporte standalone.
+
+### Fase 7: Controle de Início Manual & Recompressão em Tempo Real (Status: Concluída)
+- Chave seletora "Auto Iniciar" (`#autoConvertToggle`) para permitir adicionar imagens e ajustar parâmetros antes do início.
+- Botão "Iniciar Conversão" em lote (`#startBatchBtn`) e play individual nos cards (`btn-single-start`).
+- Botão de recompressão em tempo real no header (`#reprocessHeaderBtn`) e na barra de lote (`#reprocessBatchBtn`) com animação neon pulsante (`.pulse`) ao alterar configurações com fotos já carregadas.
+- Botão de recompressão individual (`btn-single-reprocess`) em cada card para testes pontuais de fidelidade visual.
+- Ciclo de reprocessamento seguro a partir de `item.file` original em memória com revogação limpa de ObjectURLs anteriores para evitar vazamentos de RAM.
 
 ---
 
@@ -133,7 +140,8 @@ gantt
 4. **Resiliência de Memória:** O navegador não trava nem apresenta congelamento perceptível durante a conversão de lotes com até 20 imagens.
 5. **Usabilidade & Estética:** Interface com nota máxima de acabamento visual, responsiva em desktop e mobile, com identidade visual da Zwei Coorporações LTDA.
 6. **Suporte Desktop:** Disponibilização de executável `ZweiPixelCompact.exe` independente para Windows com recurso de salvamento direto em pastas locais.
-7. **Entrega dos Arquivos:** Todos os arquivos de documentação (`Plan.md`, `Agents.md`, `readme.md`, `sdd.md`) sincronizados e em conformidade estrita.
+7. **Controle de Início & Recompressão:** Capacidade de desativar o início automático para calibrar qualidade antecipadamente e recomprimir imagens existentes em lote ou individualmente com atualização instantânea de métricas.
+8. **Entrega dos Arquivos:** Todos os arquivos de documentação (`Plan.md`, `Agents.md`, `readme.md`, `sdd.md`) sincronizados e em conformidade estrita.
 
 ---
 
